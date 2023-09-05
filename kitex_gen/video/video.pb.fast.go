@@ -55,11 +55,6 @@ func (x *Video) FastRead(buf []byte, _type int8, number int32) (offset int, err 
 		if err != nil {
 			goto ReadFieldError
 		}
-	case 9:
-		offset, err = x.fastReadField9(buf, _type)
-		if err != nil {
-			goto ReadFieldError
-		}
 	default:
 		offset, err = fastpb.Skip(buf, _type, number)
 		if err != nil {
@@ -79,13 +74,8 @@ func (x *Video) fastReadField1(buf []byte, _type int8) (offset int, err error) {
 }
 
 func (x *Video) fastReadField2(buf []byte, _type int8) (offset int, err error) {
-	var v user.User
-	offset, err = fastpb.ReadMessage(buf, _type, &v)
-	if err != nil {
-		return offset, err
-	}
-	x.Author = &v
-	return offset, nil
+	x.AuthorId, offset, err = fastpb.ReadInt64(buf, _type)
+	return offset, err
 }
 
 func (x *Video) fastReadField3(buf []byte, _type int8) (offset int, err error) {
@@ -115,11 +105,6 @@ func (x *Video) fastReadField7(buf []byte, _type int8) (offset int, err error) {
 
 func (x *Video) fastReadField8(buf []byte, _type int8) (offset int, err error) {
 	x.Title, offset, err = fastpb.ReadString(buf, _type)
-	return offset, err
-}
-
-func (x *Video) fastReadField9(buf []byte, _type int8) (offset int, err error) {
-	x.ShareCount, offset, err = fastpb.ReadInt64(buf, _type)
 	return offset, err
 }
 
@@ -395,7 +380,6 @@ func (x *Video) FastWrite(buf []byte) (offset int) {
 	offset += x.fastWriteField6(buf[offset:])
 	offset += x.fastWriteField7(buf[offset:])
 	offset += x.fastWriteField8(buf[offset:])
-	offset += x.fastWriteField9(buf[offset:])
 	return offset
 }
 
@@ -408,10 +392,10 @@ func (x *Video) fastWriteField1(buf []byte) (offset int) {
 }
 
 func (x *Video) fastWriteField2(buf []byte) (offset int) {
-	if x.Author == nil {
+	if x.AuthorId == 0 {
 		return offset
 	}
-	offset += fastpb.WriteMessage(buf[offset:], 2, x.GetAuthor())
+	offset += fastpb.WriteInt64(buf[offset:], 2, x.GetAuthorId())
 	return offset
 }
 
@@ -460,14 +444,6 @@ func (x *Video) fastWriteField8(buf []byte) (offset int) {
 		return offset
 	}
 	offset += fastpb.WriteString(buf[offset:], 8, x.GetTitle())
-	return offset
-}
-
-func (x *Video) fastWriteField9(buf []byte) (offset int) {
-	if x.ShareCount == 0 {
-		return offset
-	}
-	offset += fastpb.WriteInt64(buf[offset:], 9, x.GetShareCount())
 	return offset
 }
 
@@ -673,7 +649,6 @@ func (x *Video) Size() (n int) {
 	n += x.sizeField6()
 	n += x.sizeField7()
 	n += x.sizeField8()
-	n += x.sizeField9()
 	return n
 }
 
@@ -686,10 +661,10 @@ func (x *Video) sizeField1() (n int) {
 }
 
 func (x *Video) sizeField2() (n int) {
-	if x.Author == nil {
+	if x.AuthorId == 0 {
 		return n
 	}
-	n += fastpb.SizeMessage(2, x.GetAuthor())
+	n += fastpb.SizeInt64(2, x.GetAuthorId())
 	return n
 }
 
@@ -738,14 +713,6 @@ func (x *Video) sizeField8() (n int) {
 		return n
 	}
 	n += fastpb.SizeString(8, x.GetTitle())
-	return n
-}
-
-func (x *Video) sizeField9() (n int) {
-	if x.ShareCount == 0 {
-		return n
-	}
-	n += fastpb.SizeInt64(9, x.GetShareCount())
 	return n
 }
 
@@ -941,14 +908,13 @@ func (x *PublishListResponse) sizeField3() (n int) {
 
 var fieldIDToName_Video = map[int32]string{
 	1: "Id",
-	2: "Author",
+	2: "AuthorId",
 	3: "PlayUrl",
 	4: "CoverUrl",
 	5: "FavoriteCount",
 	6: "CommentCount",
 	7: "IsFavorite",
 	8: "Title",
-	9: "ShareCount",
 }
 
 var fieldIDToName_FeedRequest = map[int32]string{
