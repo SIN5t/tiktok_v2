@@ -1,8 +1,8 @@
 package response
 
 import (
-	"tiktok_v2/kitex_gen/relation"
-	"tiktok_v2/kitex_gen/user"
+	"github.com/SIN5t/tiktok_v2/kitex_gen/relation"
+	"github.com/SIN5t/tiktok_v2/kitex_gen/user"
 )
 
 type RelationAction struct {

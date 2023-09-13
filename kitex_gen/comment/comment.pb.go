@@ -8,11 +8,11 @@ package comment
 
 import (
 	context "context"
+	user "github.com/SIN5t/tiktok_v2/kitex_gen/user"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
-	user "tiktok_v2/kitex_gen/user"
 )
 
 const (

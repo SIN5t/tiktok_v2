@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	user "tiktok_v2/kitex_gen/user"
+	user "github.com/SIN5t/tiktok_v2/kitex_gen/user"
 )
 
 // UserServiceImpl implements the last service interface defined in the IDL.

@@ -2,8 +2,8 @@
 package favoriteservice
 
 import (
+	favorite "github.com/SIN5t/tiktok_v2/kitex_gen/favorite"
 	server "github.com/cloudwego/kitex/server"
-	favorite "tiktok_v2/kitex_gen/favorite"
 )
 
 // NewServer creates a server.Server with the given service and options.

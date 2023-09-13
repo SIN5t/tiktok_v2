@@ -1,9 +1,9 @@
 package main
 
 import (
+	favorite2 "github.com/SIN5t/tiktok_v2/cmd/favorite/service"
+	favorite "github.com/SIN5t/tiktok_v2/kitex_gen/favorite/favoriteservice"
 	"log"
-	favorite2 "tiktok_v2/cmd/favorite/service"
-	favorite "tiktok_v2/kitex_gen/favorite/favoriteservice"
 )
 
 func main() {

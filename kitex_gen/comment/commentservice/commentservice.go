@@ -4,11 +4,11 @@ package commentservice
 
 import (
 	"context"
+	comment "github.com/SIN5t/tiktok_v2/kitex_gen/comment"
 	client "github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
 	streaming "github.com/cloudwego/kitex/pkg/streaming"
 	proto "google.golang.org/protobuf/proto"
-	comment "tiktok_v2/kitex_gen/comment"
 )
 
 func serviceInfo() *kitex.ServiceInfo {

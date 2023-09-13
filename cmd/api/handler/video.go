@@ -2,12 +2,12 @@ package handler
 
 import (
 	"context"
+	"github.com/SIN5t/tiktok_v2/cmd/api/rpc"
+	"github.com/SIN5t/tiktok_v2/internal/response"
+	kitexVideo "github.com/SIN5t/tiktok_v2/kitex_gen/video"
 	"github.com/cloudwego/hertz/pkg/app"
 	"net/http"
 	"strconv"
-	"tiktok_v2/cmd/api/rpc"
-	"tiktok_v2/internal/response"
-	kitexVideo "tiktok_v2/kitex_gen/video"
 	"time"
 )
 

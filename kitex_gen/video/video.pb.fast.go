@@ -4,8 +4,8 @@ package video
 
 import (
 	fmt "fmt"
+	user "github.com/SIN5t/tiktok_v2/idl/kitex_gen/user"
 	fastpb "github.com/cloudwego/fastpb"
-	user "tiktok_v2/kitex_gen/user"
 )
 
 var (
@@ -74,8 +74,13 @@ func (x *Video) fastReadField1(buf []byte, _type int8) (offset int, err error) {
 }
 
 func (x *Video) fastReadField2(buf []byte, _type int8) (offset int, err error) {
-	x.AuthorId, offset, err = fastpb.ReadInt64(buf, _type)
-	return offset, err
+	var v User
+	offset, err = fastpb.ReadMessage(buf, _type, &v)
+	if err != nil {
+		return offset, err
+	}
+	x.Author = &v
+	return offset, nil
 }
 
 func (x *Video) fastReadField3(buf []byte, _type int8) (offset int, err error) {
@@ -200,6 +205,71 @@ func (x *FeedResponse) fastReadField3(buf []byte, _type int8) (offset int, err e
 
 func (x *FeedResponse) fastReadField4(buf []byte, _type int8) (offset int, err error) {
 	x.NextTime, offset, err = fastpb.ReadInt64(buf, _type)
+	return offset, err
+}
+
+func (x *User) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	case 1:
+		offset, err = x.fastReadField1(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	case 2:
+		offset, err = x.fastReadField2(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	case 3:
+		offset, err = x.fastReadField3(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	case 4:
+		offset, err = x.fastReadField4(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	case 5:
+		offset, err = x.fastReadField5(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
+ReadFieldError:
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_User[number], err)
+}
+
+func (x *User) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+	x.Id, offset, err = fastpb.ReadInt64(buf, _type)
+	return offset, err
+}
+
+func (x *User) fastReadField2(buf []byte, _type int8) (offset int, err error) {
+	x.Name, offset, err = fastpb.ReadString(buf, _type)
+	return offset, err
+}
+
+func (x *User) fastReadField3(buf []byte, _type int8) (offset int, err error) {
+	x.FollowCount, offset, err = fastpb.ReadInt64(buf, _type)
+	return offset, err
+}
+
+func (x *User) fastReadField4(buf []byte, _type int8) (offset int, err error) {
+	x.FollowerCount, offset, err = fastpb.ReadInt64(buf, _type)
+	return offset, err
+}
+
+func (x *User) fastReadField5(buf []byte, _type int8) (offset int, err error) {
+	x.IsFollow, offset, err = fastpb.ReadBool(buf, _type)
 	return offset, err
 }
 
@@ -392,10 +462,10 @@ func (x *Video) fastWriteField1(buf []byte) (offset int) {
 }
 
 func (x *Video) fastWriteField2(buf []byte) (offset int) {
-	if x.AuthorId == 0 {
+	if x.Author == nil {
 		return offset
 	}
-	offset += fastpb.WriteInt64(buf[offset:], 2, x.GetAuthorId())
+	offset += fastpb.WriteMessage(buf[offset:], 2, x.GetAuthor())
 	return offset
 }
 
@@ -514,6 +584,58 @@ func (x *FeedResponse) fastWriteField4(buf []byte) (offset int) {
 		return offset
 	}
 	offset += fastpb.WriteInt64(buf[offset:], 4, x.GetNextTime())
+	return offset
+}
+
+func (x *User) FastWrite(buf []byte) (offset int) {
+	if x == nil {
+		return offset
+	}
+	offset += x.fastWriteField1(buf[offset:])
+	offset += x.fastWriteField2(buf[offset:])
+	offset += x.fastWriteField3(buf[offset:])
+	offset += x.fastWriteField4(buf[offset:])
+	offset += x.fastWriteField5(buf[offset:])
+	return offset
+}
+
+func (x *User) fastWriteField1(buf []byte) (offset int) {
+	if x.Id == 0 {
+		return offset
+	}
+	offset += fastpb.WriteInt64(buf[offset:], 1, x.GetId())
+	return offset
+}
+
+func (x *User) fastWriteField2(buf []byte) (offset int) {
+	if x.Name == "" {
+		return offset
+	}
+	offset += fastpb.WriteString(buf[offset:], 2, x.GetName())
+	return offset
+}
+
+func (x *User) fastWriteField3(buf []byte) (offset int) {
+	if x.FollowCount == 0 {
+		return offset
+	}
+	offset += fastpb.WriteInt64(buf[offset:], 3, x.GetFollowCount())
+	return offset
+}
+
+func (x *User) fastWriteField4(buf []byte) (offset int) {
+	if x.FollowerCount == 0 {
+		return offset
+	}
+	offset += fastpb.WriteInt64(buf[offset:], 4, x.GetFollowerCount())
+	return offset
+}
+
+func (x *User) fastWriteField5(buf []byte) (offset int) {
+	if !x.IsFollow {
+		return offset
+	}
+	offset += fastpb.WriteBool(buf[offset:], 5, x.GetIsFollow())
 	return offset
 }
 
@@ -661,10 +783,10 @@ func (x *Video) sizeField1() (n int) {
 }
 
 func (x *Video) sizeField2() (n int) {
-	if x.AuthorId == 0 {
+	if x.Author == nil {
 		return n
 	}
-	n += fastpb.SizeInt64(2, x.GetAuthorId())
+	n += fastpb.SizeMessage(2, x.GetAuthor())
 	return n
 }
 
@@ -783,6 +905,58 @@ func (x *FeedResponse) sizeField4() (n int) {
 		return n
 	}
 	n += fastpb.SizeInt64(4, x.GetNextTime())
+	return n
+}
+
+func (x *User) Size() (n int) {
+	if x == nil {
+		return n
+	}
+	n += x.sizeField1()
+	n += x.sizeField2()
+	n += x.sizeField3()
+	n += x.sizeField4()
+	n += x.sizeField5()
+	return n
+}
+
+func (x *User) sizeField1() (n int) {
+	if x.Id == 0 {
+		return n
+	}
+	n += fastpb.SizeInt64(1, x.GetId())
+	return n
+}
+
+func (x *User) sizeField2() (n int) {
+	if x.Name == "" {
+		return n
+	}
+	n += fastpb.SizeString(2, x.GetName())
+	return n
+}
+
+func (x *User) sizeField3() (n int) {
+	if x.FollowCount == 0 {
+		return n
+	}
+	n += fastpb.SizeInt64(3, x.GetFollowCount())
+	return n
+}
+
+func (x *User) sizeField4() (n int) {
+	if x.FollowerCount == 0 {
+		return n
+	}
+	n += fastpb.SizeInt64(4, x.GetFollowerCount())
+	return n
+}
+
+func (x *User) sizeField5() (n int) {
+	if !x.IsFollow {
+		return n
+	}
+	n += fastpb.SizeBool(5, x.GetIsFollow())
 	return n
 }
 
@@ -908,7 +1082,7 @@ func (x *PublishListResponse) sizeField3() (n int) {
 
 var fieldIDToName_Video = map[int32]string{
 	1: "Id",
-	2: "AuthorId",
+	2: "Author",
 	3: "PlayUrl",
 	4: "CoverUrl",
 	5: "FavoriteCount",
@@ -927,6 +1101,14 @@ var fieldIDToName_FeedResponse = map[int32]string{
 	2: "StatusMsg",
 	3: "VideoList",
 	4: "NextTime",
+}
+
+var fieldIDToName_User = map[int32]string{
+	1: "Id",
+	2: "Name",
+	3: "FollowCount",
+	4: "FollowerCount",
+	5: "IsFollow",
 }
 
 var fieldIDToName_PublishActionRequest = map[int32]string{

@@ -4,8 +4,8 @@ package favorite
 
 import (
 	fmt "fmt"
+	video "github.com/SIN5t/tiktok_v2/kitex_gen/video"
 	fastpb "github.com/cloudwego/fastpb"
-	video "tiktok_v2/kitex_gen/video"
 )
 
 var (

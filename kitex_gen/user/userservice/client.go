@@ -4,9 +4,9 @@ package userservice
 
 import (
 	"context"
+	user "github.com/SIN5t/tiktok_v2/kitex_gen/user"
 	client "github.com/cloudwego/kitex/client"
 	callopt "github.com/cloudwego/kitex/client/callopt"
-	user "tiktok_v2/kitex_gen/user"
 )
 
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.

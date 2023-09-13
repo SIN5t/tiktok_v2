@@ -4,9 +4,9 @@ package relationservice
 
 import (
 	"context"
+	relation "github.com/SIN5t/tiktok_v2/kitex_gen/relation"
 	client "github.com/cloudwego/kitex/client"
 	callopt "github.com/cloudwego/kitex/client/callopt"
-	relation "tiktok_v2/kitex_gen/relation"
 )
 
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.

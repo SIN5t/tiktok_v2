@@ -1,9 +1,9 @@
 package main
 
 import (
+	user2 "github.com/SIN5t/tiktok_v2/cmd/user/service"
+	user "github.com/SIN5t/tiktok_v2/kitex_gen/user/userservice"
 	"log"
-	user2 "tiktok_v2/cmd/user/service"
-	user "tiktok_v2/kitex_gen/user/userservice"
 )
 
 func main() {

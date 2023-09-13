@@ -3,8 +3,8 @@
 package commentservice
 
 import (
+	comment "github.com/SIN5t/tiktok_v2/kitex_gen/comment"
 	server "github.com/cloudwego/kitex/server"
-	comment "tiktok_v2/kitex_gen/comment"
 )
 
 // NewInvoker creates a server.Invoker with the given service and options.

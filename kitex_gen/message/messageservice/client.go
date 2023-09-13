@@ -4,9 +4,9 @@ package messageservice
 
 import (
 	"context"
+	message "github.com/SIN5t/tiktok_v2/kitex_gen/message"
 	client "github.com/cloudwego/kitex/client"
 	callopt "github.com/cloudwego/kitex/client/callopt"
-	message "tiktok_v2/kitex_gen/message"
 )
 
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
