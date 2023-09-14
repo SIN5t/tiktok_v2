@@ -3,14 +3,14 @@
 package main
 
 import (
-	// "github.com/SIN5t/tiktok_v2/cmd/api/biz/router"
+	router "github.com/SIN5t/tiktok_v2/cmd/api/biz/router"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
 // register registers all routers.
 func register(r *server.Hertz) {
 
-	//router.GeneratedRegister(r)
+	router.GeneratedRegister(r)
 
 	customizedRegister(r)
 }

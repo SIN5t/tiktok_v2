@@ -22,14 +22,14 @@ import (
 var videoClient videoservice.Client //需要配置，需要初始化
 
 // InitVideoClient
-// 在构建client和server通信之前，先关注连通性
+// 在构建client和server 通信之前，先关注连通性
 func InitVideoClient() {
 	//加载配置文件
 	videoConfig := viper.Init("video")
 	etcdAddr := fmt.Sprintf("%s:%d", videoConfig.GetString("etcd.host"), videoConfig.GetString("etcd.port"))
-	resolver, err2 := etcd.NewEtcdResolver([]string{etcdAddr})
-	if err2 != nil {
-		log.Fatal(err2)
+	resolver, err := etcd.NewEtcdResolver([]string{etcdAddr})
+	if err != nil {
+		log.Fatal(err)
 	}
 	serverName := videoConfig.GetString("server.name") //指定客户端所连接的服务的名称
 	newClient, err := videoservice.NewClient(

@@ -10,7 +10,6 @@ func Init(configName string) (viper v.Viper) {
 	viper = *v.New()
 	viper.SetConfigName(configName)
 	viper.SetConfigType("yml")
-
 	viper.AddConfigPath("./config")
 	viper.AddConfigPath("../config")
 	viper.AddConfigPath("../../config")

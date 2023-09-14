@@ -3,14 +3,13 @@
 package main
 
 import (
+	"github.com/SIN5t/tiktok_v2/cmd/api/init"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
 func main() {
-	h := server.New(
-		server.WithHandleMethodNotAllowed(true), // coordinate with NoMethod
-		server.WithHostPorts("127.0.0.1:8080"),
-	)
+	init.Init()
+	h := server.Default()
 
 	register(h)
 	h.Spin()
