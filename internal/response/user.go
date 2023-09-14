@@ -1,6 +1,6 @@
 package response
 
-import "tiktok_v2/kitex_gen/user"
+import "github.com/SIN5t/tiktok_v2/kitex_gen/user"
 
 type Register struct {
 	Base

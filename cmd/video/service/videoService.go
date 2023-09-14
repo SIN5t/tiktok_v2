@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
+	"github.com/SIN5t/tiktok_v2/dal/dao"
+	video "github.com/SIN5t/tiktok_v2/kitex_gen/video"
 	"github.com/prometheus/common/log"
-	"tiktok_v2/dal/dao"
-	video "tiktok_v2/kitex_gen/video"
 )
 
 // VideoServiceImpl implements the last service interface defined in the IDL.

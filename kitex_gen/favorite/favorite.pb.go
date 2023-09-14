@@ -8,11 +8,11 @@ package favorite
 
 import (
 	context "context"
+	video "github.com/SIN5t/tiktok_v2/kitex_gen/video"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
-	video "tiktok_v2/kitex_gen/video"
 )
 
 const (

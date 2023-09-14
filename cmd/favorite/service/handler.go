@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	favorite "tiktok_v2/kitex_gen/favorite"
+	favorite "github.com/SIN5t/tiktok_v2/kitex_gen/favorite"
 )
 
 // FavoriteServiceImpl implements the last service interface defined in the IDL.

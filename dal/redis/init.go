@@ -3,10 +3,10 @@ package redis
 import (
 	"context"
 	"fmt"
+	"github.com/SIN5t/tiktok_v2/pkg/viper"
 	"github.com/redis/go-redis/v9"
 	"log"
 	"sync"
-	"tiktok_v2/pkg/viper"
 	"time"
 )
 

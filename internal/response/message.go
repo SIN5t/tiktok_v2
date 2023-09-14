@@ -1,6 +1,6 @@
 package response
 
-import "tiktok_v2/kitex_gen/message"
+import "github.com/SIN5t/tiktok_v2/kitex_gen/message"
 
 type MessageChat struct {
 	Base

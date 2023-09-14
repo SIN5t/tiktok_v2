@@ -1,9 +1,9 @@
 package main
 
 import (
+	message2 "github.com/SIN5t/tiktok_v2/cmd/message/service"
+	message "github.com/SIN5t/tiktok_v2/kitex_gen/message/messageservice"
 	"log"
-	message2 "tiktok_v2/cmd/message/service"
-	message "tiktok_v2/kitex_gen/message/messageservice"
 )
 
 func main() {

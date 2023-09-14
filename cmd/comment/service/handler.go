@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	comment "tiktok_v2/kitex_gen/comment"
+	comment "github.com/SIN5t/tiktok_v2/kitex_gen/comment"
 )
 
 // CommentServiceImpl implements the last service interface defined in the IDL.

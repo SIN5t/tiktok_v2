@@ -1,9 +1,9 @@
 package main
 
 import (
+	"github.com/SIN5t/tiktok_v2/cmd/comment/service"
+	comment "github.com/SIN5t/tiktok_v2/kitex_gen/comment/commentservice"
 	"log"
-	"tiktok_v2/cmd/comment/service"
-	comment "tiktok_v2/kitex_gen/comment/commentservice"
 )
 
 func main() {

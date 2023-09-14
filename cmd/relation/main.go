@@ -1,9 +1,9 @@
 package main
 
 import (
+	relation2 "github.com/SIN5t/tiktok_v2/cmd/relation/service"
+	relation "github.com/SIN5t/tiktok_v2/kitex_gen/relation/relationservice"
 	"log"
-	relation2 "tiktok_v2/cmd/relation/service"
-	relation "tiktok_v2/kitex_gen/relation/relationservice"
 )
 
 func main() {

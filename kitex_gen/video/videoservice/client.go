@@ -4,9 +4,9 @@ package videoservice
 
 import (
 	"context"
+	video "github.com/SIN5t/tiktok_v2/kitex_gen/video"
 	client "github.com/cloudwego/kitex/client"
 	callopt "github.com/cloudwego/kitex/client/callopt"
-	video "tiktok_v2/kitex_gen/video"
 )
 
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.

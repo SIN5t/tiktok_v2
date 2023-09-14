@@ -2,11 +2,11 @@ package dao
 
 import (
 	"fmt"
+	"github.com/SIN5t/tiktok_v2/pkg/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"log"
-	"tiktok_v2/pkg/viper"
 )
 
 var (

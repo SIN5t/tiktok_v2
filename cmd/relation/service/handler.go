@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	relation "tiktok_v2/kitex_gen/relation"
+	relation "github.com/SIN5t/tiktok_v2/kitex_gen/relation"
 )
 
 // RelationServiceImpl implements the last service interface defined in the IDL.

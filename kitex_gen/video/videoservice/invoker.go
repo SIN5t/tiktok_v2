@@ -3,8 +3,8 @@
 package videoservice
 
 import (
+	video "github.com/SIN5t/tiktok_v2/kitex_gen/video"
 	server "github.com/cloudwego/kitex/server"
-	video "tiktok_v2/kitex_gen/video"
 )
 
 // NewInvoker creates a server.Invoker with the given handler and options.

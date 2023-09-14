@@ -2,15 +2,15 @@ package main
 
 import (
 	"fmt"
+	"github.com/SIN5t/tiktok_v2/cmd/video/service"
+	"github.com/SIN5t/tiktok_v2/kitex_gen/video/videoservice"
+	"github.com/SIN5t/tiktok_v2/pkg/etcd"
+	"github.com/SIN5t/tiktok_v2/pkg/viper"
 	"github.com/bytedance/gopkg/util/logger"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
 	"log"
 	"net"
-	"tiktok_v2/cmd/video/service"
-	"tiktok_v2/kitex_gen/video/videoservice"
-	"tiktok_v2/pkg/etcd"
-	"tiktok_v2/pkg/viper"
 )
 
 var (

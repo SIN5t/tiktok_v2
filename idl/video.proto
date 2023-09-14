@@ -47,9 +47,9 @@ message PublishListResponse{
   repeated Video video_list = 3;
 }
 service VideoService {
-  rpc Feed (FeedRequest) returns (FeedResponse);
-  rpc PublishAction (PublishActionRequest) returns (PublishActionResponse);
-  rpc PublishList (PublishListRequest) returns (PublishListResponse);
+  rpc Feed (FeedRequest) returns (FeedResponse){};
+  rpc PublishAction (PublishActionRequest) returns (PublishActionResponse){};
+  rpc PublishList (PublishListRequest) returns (PublishListResponse){};
 }
 
 

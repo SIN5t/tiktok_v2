@@ -1,6 +1,6 @@
 package response
 
-import "tiktok_v2/kitex_gen/video"
+import "github.com/SIN5t/tiktok_v2/kitex_gen/video"
 
 type PublishAction struct {
 	Base

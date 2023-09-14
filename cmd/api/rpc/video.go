@@ -3,15 +3,15 @@ package rpc
 import (
 	"context"
 	"fmt"
+	"github.com/SIN5t/tiktok_v2/kitex_gen/video"
+	"github.com/SIN5t/tiktok_v2/kitex_gen/video/videoservice"
+	"github.com/SIN5t/tiktok_v2/pkg/etcd"
+	"github.com/SIN5t/tiktok_v2/pkg/viper"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/retry"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/kitex-contrib/obs-opentelemetry/tracing"
 	"log"
-	"tiktok_v2/kitex_gen/video"
-	"tiktok_v2/kitex_gen/video/videoservice"
-	"tiktok_v2/pkg/etcd"
-	"tiktok_v2/pkg/viper"
 	"time"
 )
 
