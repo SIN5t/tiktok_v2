@@ -8,6 +8,7 @@ require (
 	github.com/cloudwego/hertz v0.6.8
 	github.com/cloudwego/kitex v0.7.0
 	github.com/disintegration/imaging v1.6.2
+	github.com/golang/protobuf v1.5.3
 	github.com/kitex-contrib/obs-opentelemetry v0.2.3
 	github.com/prometheus/common v0.26.0
 	github.com/redis/go-redis/v9 v9.1.0
@@ -49,7 +50,6 @@ require (
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/pprof v0.0.0-20230509042627-b1315fad0c5a // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/henrylee2cn/ameda v1.4.10 // indirect

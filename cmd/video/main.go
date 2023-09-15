@@ -2,8 +2,7 @@ package main
 
 import (
 	"fmt"
-	db "github.com/SIN5t/tiktok_v2/cmd/video/dal"
-	"github.com/SIN5t/tiktok_v2/cmd/video/handler"
+	"github.com/SIN5t/tiktok_v2/cmd/video/service"
 	"github.com/SIN5t/tiktok_v2/kitex_gen/video/videoservice"
 	"github.com/SIN5t/tiktok_v2/pkg/etcd"
 	"github.com/SIN5t/tiktok_v2/pkg/viper"
@@ -23,29 +22,25 @@ var (
 )
 
 func main() {
-	// init db\minio
-	db.InitDB()
+
 	//服务注册
-	registry, err := etcd.NewEtcdRegistry([]string{etcdAddr})
-	if err != nil {
-		log.Fatal(err.Error())
+	registry, err2 := etcd.NewEtcdRegistry([]string{etcdAddr})
+	if err2 != nil {
+		log.Fatal(err2.Error())
 	}
 	//使用net.ResolveTCPAddr函数将服务地址（serviceAddr）解析为TCP地址（*net.TCPAddr）。
-	addr, err := net.ResolveTCPAddr("tcp", serviceAddr)
-	if err != nil {
-		log.Fatal(err.Error())
+	addr, err2 := net.ResolveTCPAddr("tcp", serviceAddr)
+	if err2 != nil {
+		log.Fatal(err2.Error())
 	}
-	// TODO 链路追踪
-
-	// 初始化服务器
-	videoServer := videoservice.NewServer(
-		new(handler.VideoServiceImpl), //这个service就是mvc中的service
+	videoserver := videoservice.NewServer(
+		new(service.VideoServiceImpl), //这个service就是mvc中的service
 		server.WithServiceAddr(addr),  //tcp 的地址
 		server.WithRegistry(registry), //注册中心
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: serviceName}),
 	)
 
-	if err := videoServer.Run(); err != nil {
+	if err := videoserver.Run(); err != nil {
 		logger.Fatalf("%v stopped with error: %v", serviceName, err.Error())
 	}
 }

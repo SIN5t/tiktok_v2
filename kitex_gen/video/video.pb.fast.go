@@ -4,7 +4,7 @@ package video
 
 import (
 	fmt "fmt"
-	user "github.com/SIN5t/tiktok_v2/idl/kitex_gen/user"
+	user "github.com/SIN5t/tiktok_v2/kitex_gen/user"
 	fastpb "github.com/cloudwego/fastpb"
 )
 
