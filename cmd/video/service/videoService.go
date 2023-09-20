@@ -7,6 +7,7 @@ import (
 )
 
 func FeedService(ctx context.Context, latestTime int64, token string) (err error, videoListRes []*video.Video, nextTime int64) {
+
 	videoListRaw, err := db.GetVideosByLastTime(ctx, latestTime, 30)
 
 	flag := false

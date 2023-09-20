@@ -1,7 +1,7 @@
 server:
-  name: "TiktokApiServer"
+  name: "TiktokApiGateway"
   host: 0.0.0.0  # 试试和127.0.0.1的区别
-  port: 8089
+  port: 8888
   limit:
     capacity: 200
     rate: 20

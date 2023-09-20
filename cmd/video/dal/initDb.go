@@ -41,10 +41,10 @@ type Video struct {
 func InitDB() {
 
 	mysqlDSN := config.GetDsn("mysql.Source")
-	//dsn := "root:123456@tcp(127.0.0.1:3306)/tiktok?charset=utf8mb4&parseTime=True&loc=Local"
 	var err error
 
-	DB, err = gorm.Open(mysql.Open(mysqlDSN),
+	DB, err = gorm.Open(
+		mysql.Open(mysqlDSN),
 		&gorm.Config{
 			Logger: logger.New(
 				logrus.NewWriter(), // 自定义日志输出,来自openTelemetry
