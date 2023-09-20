@@ -25,3 +25,18 @@ func _feed0Mw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _userMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _registerMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _userregisterMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

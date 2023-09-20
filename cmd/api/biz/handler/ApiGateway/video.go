@@ -4,6 +4,12 @@ package ApiGateway
 
 import (
 	"context"
+	"github.com/SIN5t/tiktok_v2/cmd/api/rpc"
+	"github.com/SIN5t/tiktok_v2/kitex_gen/video"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"net/http"
+	"strconv"
+	"time"
 
 	ApiGateway "github.com/SIN5t/tiktok_v2/cmd/api/biz/model/ApiGateway"
 	"github.com/cloudwego/hertz/pkg/app"
@@ -20,8 +26,30 @@ func Feed(ctx context.Context, c *app.RequestContext) {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
+	token := c.Query("token")
+	latestTime := c.Query("latest_time")
+	latestTimeInt64, _ := strconv.ParseInt(latestTime, 10, 64)
+	if latestTime == "" {
+		latestTimeInt64 = time.Now().UnixMilli()
+	}
+	request := &video.FeedRequest{
+		LatestTime: latestTimeInt64,
+		Token:      token,
+	}
 
-	resp := new(ApiGateway.DouyinFeedResponse)
+	resp, err := rpc.FeedClient(ctx, request)
+	if err != nil {
+		hlog.Error(err.Error())
+		c.JSON(http.StatusOK, ApiGateway.BaseResp{
+			StatusCode: 1,
+			StatusMsg:  err.Error(),
+		})
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	c.JSON(consts.StatusOK, video.FeedResponse{
+		StatusCode: 0,
+		StatusMsg:  "刷新成功",
+		VideoList:  resp.VideoList,
+		NextTime:   resp.NextTime,
+	})
 }

@@ -41,7 +41,9 @@ type Video struct {
 func InitDB() {
 
 	mysqlDSN := config.GetDsn("mysql.Source")
+	//dsn := "root:123456@tcp(127.0.0.1:3306)/tiktok?charset=utf8mb4&parseTime=True&loc=Local"
 	var err error
+
 	DB, err = gorm.Open(mysql.Open(mysqlDSN),
 		&gorm.Config{
 			Logger: logger.New(
@@ -53,7 +55,7 @@ func InitDB() {
 				})},
 	)
 	if err != nil {
-		klog.Fatal("fail to init db: %s", err.Error())
+		klog.Fatal("fail to initialize db: ", err.Error())
 	}
 	/*if err := DB.Use(tracing.NewPlugin()); err != nil {
 		klog.Fatalf("use tracing plugin failed: %s", err.Error())

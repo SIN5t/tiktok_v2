@@ -16,7 +16,7 @@ func GetVideosByLastTime(ctx context.Context, lastTime int64, limit int) (videoL
 	}
 
 	lastTimeUnixMilli := time.UnixMilli(lastTime)
-	err = conn.Limit(limit).Order("create_at desc").Where("create_at < ?", lastTimeUnixMilli).Find(&videoList).Error
+	err = conn.Limit(limit).Order("create_time desc").Where("create_time < ?", lastTimeUnixMilli).Find(&videoList).Error
 	if err != nil {
 		return nil, err
 	}

@@ -7,6 +7,7 @@ import (
 	"github.com/SIN5t/tiktok_v2/kitex_gen/video/videoservice"
 	"github.com/SIN5t/tiktok_v2/pkg/etcd"
 	"github.com/SIN5t/tiktok_v2/pkg/viper"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/retry"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
@@ -26,10 +27,10 @@ var videoClient videoservice.Client //需要配置，需要初始化
 func InitVideoClient() {
 	//加载配置文件
 	videoConfig := viper.Init("video")
-	etcdAddr := fmt.Sprintf("%s:%d", videoConfig.GetString("etcd.host"), videoConfig.GetString("etcd.port"))
+	etcdAddr := fmt.Sprintf("%s:%d", videoConfig.GetString("etcd.host"), videoConfig.GetInt("etcd.port"))
 	resolver, err := etcd.NewEtcdResolver([]string{etcdAddr})
 	if err != nil {
-		log.Fatal(err)
+		hlog.Fatal(err)
 	}
 	serverName := videoConfig.GetString("server.name") //指定客户端所连接的服务的名称
 	newClient, err := videoservice.NewClient(

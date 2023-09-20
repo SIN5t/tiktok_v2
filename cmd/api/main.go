@@ -3,12 +3,12 @@
 package main
 
 import (
-	"github.com/SIN5t/tiktok_v2/cmd/api/init"
+	"github.com/SIN5t/tiktok_v2/cmd/api/initialize"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
 func main() {
-	init.Init()
+	initialize.Init()
 	h := server.Default()
 
 	register(h)

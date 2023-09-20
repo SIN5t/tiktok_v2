@@ -23,5 +23,12 @@ func Register(r *server.Hertz) {
 			_feed := _douyin.Group("/feed", _feedMw()...)
 			_feed.GET("/", append(_feed0Mw(), ApiGateway.Feed)...)
 		}
+		{
+			_user := _douyin.Group("/user", _userMw()...)
+			{
+				_register := _user.Group("/register", _registerMw()...)
+				_register.POST("/", append(_userregisterMw(), ApiGateway.UserRegister)...)
+			}
+		}
 	}
 }
