@@ -55,7 +55,7 @@ func InitDB() {
 				})},
 	)
 	if err != nil {
-		klog.Fatal("fail to initialize db: ", err.Error())
+		klog.Fatal("fail to initializeLog db: ", err.Error())
 	}
 	/*if err := DB.Use(tracing.NewPlugin()); err != nil {
 		klog.Fatalf("use tracing plugin failed: %s", err.Error())

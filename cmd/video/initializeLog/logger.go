@@ -1,0 +1,5 @@
+package initializeLog
+
+func InitLogger() {
+
+}

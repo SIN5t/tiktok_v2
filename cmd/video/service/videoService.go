@@ -4,6 +4,7 @@ import (
 	db "github.com/SIN5t/tiktok_v2/cmd/video/dal"
 	"github.com/SIN5t/tiktok_v2/kitex_gen/video"
 	"golang.org/x/net/context"
+	"time"
 )
 
 func FeedService(ctx context.Context, latestTime int64, token string) (err error, videoListRes []*video.Video, nextTime int64) {
@@ -16,7 +17,7 @@ func FeedService(ctx context.Context, latestTime int64, token string) (err error
 		flag = true //已登入
 	}
 
-	videoListRes = make([]*video.Video, 0) //存的元素类型是应用，而不是对象本身
+	videoListRes = make([]*video.Video, 0) //存的元素类型是指针，而不是对象本身
 	for _, value := range videoListRaw {
 
 		//如果登入
@@ -38,9 +39,14 @@ func FeedService(ctx context.Context, latestTime int64, token string) (err error
 			FavoriteCount: 0,
 			CommentCount:  0,
 			IsFavorite:    false,
-			Title:         "",
+			Title:         value.Title,
 		}
 		videoListRes = append(videoListRes, &curVideo) //存入地址
 	}
-	return nil, videoListRes, videoListRaw[len(videoListRaw)].CreateTime.UnixMilli()
+	if len(videoListRes) <= 0 {
+		return nil, videoListRes, time.Now().UnixMilli()
+	}
+	/*time1 := videoListRaw[len(videoListRaw)].CreateTime.UnixMilli()
+	fmt.Println(time1)*/
+	return nil, videoListRes, videoListRaw[len(videoListRaw)-1].CreateTime.UnixMilli()
 }

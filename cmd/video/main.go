@@ -7,7 +7,7 @@ import (
 	"github.com/SIN5t/tiktok_v2/kitex_gen/video/videoservice"
 	"github.com/SIN5t/tiktok_v2/pkg/etcd"
 	"github.com/SIN5t/tiktok_v2/pkg/viper"
-	"github.com/bytedance/gopkg/util/logger"
+	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
 	"log"
@@ -34,6 +34,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+	// TODO obs 链路追踪
+	/*provider.NewOpenTelemetryProvider(
+		provider.WithServiceName(serviceName),
+		provider.WithExportEndpoint(etcdAddr),
+		provider.WithInsecure(),
+	)*/
+
 	videoServer := videoservice.NewServer(
 		new(handler.VideoServiceImpl), //这个service就是mvc中的service
 		server.WithServiceAddr(addr),  //tcp 的地址
@@ -42,6 +49,6 @@ func main() {
 	)
 
 	if err := videoServer.Run(); err != nil {
-		logger.Fatalf("%v stopped with error: %v", serviceName, err.Error())
+		klog.Fatalf("%v stopped with error: %v", serviceName, err.Error())
 	}
 }
