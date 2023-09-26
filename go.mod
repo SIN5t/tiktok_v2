@@ -3,12 +3,13 @@ module github.com/SIN5t/tiktok_v2
 go 1.20
 
 require (
-	github.com/bytedance/gopkg v0.0.0-20230728082804-614d0af6619b
 	github.com/cloudwego/fastpb v0.0.4
 	github.com/cloudwego/hertz v0.6.8
 	github.com/cloudwego/kitex v0.7.0
 	github.com/disintegration/imaging v1.6.2
 	github.com/golang/protobuf v1.5.3
+	github.com/hertz-contrib/obs-opentelemetry/tracing v0.3.0
+	github.com/hertz-contrib/pprof v0.1.1
 	github.com/kitex-contrib/obs-opentelemetry v0.2.3
 	github.com/prometheus/common v0.26.0
 	github.com/redis/go-redis/v9 v9.1.0
@@ -30,6 +31,7 @@ require (
 	github.com/apache/thrift v0.13.0 // indirect
 	github.com/aws/aws-sdk-go v1.38.20 // indirect
 	github.com/bytedance/go-tagexpr/v2 v2.9.6 // indirect
+	github.com/bytedance/gopkg v0.0.0-20230728082804-614d0af6619b // indirect
 	github.com/bytedance/sonic v1.9.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.2.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
@@ -47,6 +49,7 @@ require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/fatih/structtag v1.2.0 // indirect
+	github.com/felixge/fgprof v0.9.3 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/go-logr/logr v1.2.4 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect

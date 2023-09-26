@@ -21,11 +21,12 @@ import (
 func Feed(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req ApiGateway.DouyinFeedRequest
-	err = c.BindAndValidate(&req)
+	err = c.BindAndValidate(&req) // TODO 这里是否就已经自动导入token和latestTime，不需要再Query
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
+
 	token := c.Query("token")
 	latestTime := c.Query("latest_time")
 	latestTimeInt64, _ := strconv.ParseInt(latestTime, 10, 64)

@@ -1,5 +1,5 @@
 server:
-  name: "TikTokFeedServer"
+  name: "TikTokVideoServer"
   host: 0.0.0.0
   port: 8086
 
@@ -16,5 +16,10 @@ video:
 etcd:
   host: 0.0.0.0
   port: 2379
+
+otel:
+  host: 0.0.0.0
+  port: 4317 # OTLP gRPC receiver
+
 password:
   salt: "asdf"

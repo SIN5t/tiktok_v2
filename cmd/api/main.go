@@ -7,6 +7,8 @@ import (
 	"github.com/SIN5t/tiktok_v2/cmd/api/initialize"
 	"github.com/SIN5t/tiktok_v2/pkg/viper"
 	"github.com/cloudwego/hertz/pkg/app/server"
+	"github.com/hertz-contrib/obs-opentelemetry/tracing"
+	"github.com/hertz-contrib/pprof"
 )
 
 var config = viper.Init("api")
@@ -16,12 +18,25 @@ func main() {
 	//初始化client、中间件、jwt、logger...
 	initialize.Init()
 
-	// TODO 链路追踪
+	/* TODO 4317端口的那个openTelemetry 容器有问题没解决
+	p := provider.NewOpenTelemetryProvider(
+		provider.WithServiceName(serviceName),
+		provider.WithExportEndpoint("localhost:4317"),
+		provider.WithInsecure(),
+	)*/
 
+	// 链路追踪
+	tracer, cfg := tracing.NewServerTracer()
 	h := server.New(
 		server.WithHostPorts(hostPorts),
+		server.WithHandleMethodNotAllowed(true), // coordinate with NoMethod
+		server.WithMaxRequestBodySize(10000000000),
+		tracer,
 	)
 
+	// 使用 pprof 和 openTelemetry的tracer 两个中间件
+	h.Use(tracing.ServerMiddleware(cfg))
+	pprof.Register(h)
 	register(h)
 	h.Spin()
 }

@@ -9,7 +9,7 @@ import (
 func GetVideosByLastTime(ctx context.Context, lastTime int64, limit int) (videoList []*Video, err error) {
 
 	//Clauses为数据库查询添加额外的选项或条件,WithContext可以做：超时和取消、事务、日志等
-	conn := DB.Clauses(dbresolver.Read).WithContext(ctx)
+	conn := VideoMysqlDB.Clauses(dbresolver.Read).WithContext(ctx)
 
 	lastTimeUnixMilli := time.UnixMilli(lastTime)
 	err = conn.Limit(limit).Order("create_time desc").Where("create_time < ?", lastTimeUnixMilli).Find(&videoList).Error
