@@ -27,7 +27,10 @@ mysql:
     charSet: utf8mb4
 
 redis:
-  addr: 127.0.0.1
+  addr: 0.0.0.0
   port: 6379
   password: 123456
-  db: 0 # 数据库编号
+  video_db: 0
+  user_db: 1
+  pool_size: 30
+  min_idle_conns: 30

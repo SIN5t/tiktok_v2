@@ -11,6 +11,7 @@ import (
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/retry"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
+	"github.com/kitex-contrib/obs-opentelemetry/provider"
 	"github.com/kitex-contrib/obs-opentelemetry/tracing"
 	"log"
 	"time"
@@ -28,11 +29,20 @@ func InitVideoClient() {
 	//加载配置文件
 	videoConfig := viper.Init("video")
 	etcdAddr := fmt.Sprintf("%s:%d", videoConfig.GetString("etcd.host"), videoConfig.GetInt("etcd.port"))
+	otlpRpcReceiver := fmt.Sprintf("%s:%d", videoConfig.GetString("otel.host"), videoConfig.GetInt("otel.port"))
+	serverName := videoConfig.GetString("server.name") //指定客户端所连接的服务的名称
+
 	resolver, err := etcd.NewEtcdResolver([]string{etcdAddr})
 	if err != nil {
 		hlog.Fatal(err)
 	}
-	serverName := videoConfig.GetString("server.name") //指定客户端所连接的服务的名称
+
+	provider.NewOpenTelemetryProvider(
+		provider.WithServiceName(serverName),
+		provider.WithExportEndpoint(otlpRpcReceiver),
+		provider.WithInsecure(),
+	)
+
 	newClient, err := videoservice.NewClient(
 		serverName,
 		//client.WithMiddleware(middleware.CommonMiddleware),

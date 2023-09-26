@@ -3,12 +3,14 @@ package config
 import (
 	"fmt"
 	"github.com/SIN5t/tiktok_v2/pkg/viper"
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
 var (
 	DB     *gorm.DB
 	config = viper.Init("db")
+	Rdb    *redis.Client
 )
 
 func GetDsn(key string) string {
@@ -24,4 +26,16 @@ func GetDsn(key string) string {
 
 func GetDB() *gorm.DB {
 	return DB
+}
+
+func InitRdb() {
+	Rdb = redis.NewClient(
+		&redis.Options{
+			Network:  "",
+			Addr:     fmt.Sprintf("%s:%d", config.GetString("redis.addr"), config.GetInt("redis.port")),
+			Password: config.GetString("redis.password"),
+			DB:       config.GetInt("redis.comment_db"),
+			PoolSize: config.GetInt("redis.pool_size"),
+		},
+	)
 }

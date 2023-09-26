@@ -1,8 +1,11 @@
 package db
 
 import (
-	"github.com/SIN5t/tiktok_v2/config"
+	"fmt"
+	commConfig "github.com/SIN5t/tiktok_v2/config"
+	"github.com/SIN5t/tiktok_v2/pkg/viper"
 	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/redis/go-redis/v9"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -10,7 +13,11 @@ import (
 	"time"
 )
 
-var DB *gorm.DB
+var (
+	VideoMysqlDB *gorm.DB
+	redisConfig  = viper.Init("redis")
+	VideoRdb     *redis.Client
+)
 
 // BaseModel model ID and other info
 type BaseModel struct {
@@ -38,12 +45,11 @@ type Video struct {
 	Title string `gorm:"type:varchar(50);not null"`
 }
 
-func InitDB() {
-
-	mysqlDSN := config.GetDsn("mysql.Source")
+func InitMysqlDB() {
+	mysqlDSN := commConfig.GetDsn("mysql.Source")
 	var err error
 
-	DB, err = gorm.Open(
+	VideoMysqlDB, err = gorm.Open(
 		mysql.Open(mysqlDSN),
 		&gorm.Config{
 			Logger: logger.New(
@@ -57,11 +63,23 @@ func InitDB() {
 	if err != nil {
 		klog.Fatal("fail to initializeLog db: ", err.Error())
 	}
-	/*if err := DB.Use(tracing.NewPlugin()); err != nil {
+	/*if err := VideoMysqlDB.Use(tracing.NewPlugin()); err != nil {
 		klog.Fatalf("use tracing plugin failed: %s", err.Error())
 	}*/
-	err = DB.AutoMigrate(&Video{})
+	err = VideoMysqlDB.AutoMigrate(&Video{})
 	if err != nil {
 		klog.Fatal("err create video table: %s", err.Error())
 	}
+}
+
+func InitRdb() {
+	VideoRdb = redis.NewClient(
+		&redis.Options{
+			Network:  "",
+			Addr:     fmt.Sprintf("%s:%d", redisConfig.GetString("redis.addr"), redisConfig.GetInt("redis.port")),
+			Password: redisConfig.GetString("redis.password"),
+			DB:       redisConfig.GetInt("redis.video_db"),
+			PoolSize: redisConfig.GetInt("redis.pool_size"),
+		},
+	)
 }
