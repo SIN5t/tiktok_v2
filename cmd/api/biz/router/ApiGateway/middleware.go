@@ -40,3 +40,13 @@ func _userregisterMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _publishMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _publishactionMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

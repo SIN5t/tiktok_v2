@@ -66,3 +66,8 @@ func InitVideoClient() {
 func FeedClient(ctx context.Context, req *video.FeedRequest) (*video.FeedResponse, error) {
 	return videoClient.Feed(ctx, req)
 }
+
+// PublishAction 将client调用server的方法进行rpc通信
+func PublishAction(ctx context.Context, req *video.PublishActionRequest) (*video.PublishActionResponse, error) {
+	return videoClient.PublishAction(ctx, req)
+}

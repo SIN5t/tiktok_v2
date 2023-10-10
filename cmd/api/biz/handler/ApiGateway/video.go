@@ -5,6 +5,7 @@ package ApiGateway
 import (
 	"context"
 	"github.com/SIN5t/tiktok_v2/cmd/api/rpc"
+	config "github.com/SIN5t/tiktok_v2/config/const"
 	"github.com/SIN5t/tiktok_v2/kitex_gen/video"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"net/http"
@@ -21,7 +22,7 @@ import (
 func Feed(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req ApiGateway.DouyinFeedRequest
-	err = c.BindAndValidate(&req) // TODO 这里是否就已经自动导入token和latestTime，不需要再Query
+	err = c.BindAndValidate(&req) // TODO 这里是否就已经给req自动导入token和latestTime，不需要再Query
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
@@ -53,4 +54,31 @@ func Feed(ctx context.Context, c *app.RequestContext) {
 		VideoList:  resp.VideoList,
 		NextTime:   resp.NextTime,
 	})
+}
+
+// PublishAction .
+// @router douyin/publish/action [POST]
+func PublishAction(ctx context.Context, c *app.RequestContext) {
+	/*var err error
+	var req ApiGateway.DouyinPublishActionRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}*/
+	request := &video.PublishActionRequest{
+		Token: c.PostForm("token"),
+		Data:  []byte(c.PostForm("data")), // TODO 校验下这样行不行，是否需要使用 FormFile 获取
+		Title: c.PostForm("title"),
+	}
+	response, err := rpc.PublishAction(ctx, request)
+	if err != nil {
+		c.JSON(consts.StatusOK, ApiGateway.DouyinPublishActionResponse{
+			StatusCode: config.FailInvalidatePara,
+			StatusMsg:  "请求参数错误",
+		})
+	}
+	//resp := new(ApiGateway.DouyinPublishActionResponse)
+
+	c.JSON(consts.StatusOK, response)
 }

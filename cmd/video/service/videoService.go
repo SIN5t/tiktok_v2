@@ -9,7 +9,14 @@ import (
 
 func FeedService(ctx context.Context, latestTime int64, token string) (err error, videoListRes []*video.Video, nextTime int64) {
 
-	videoListRaw, err := db.GetVideosByLastTime(ctx, latestTime, 30)
+	// redis 获取视频
+	videoListFromRedis, err := db.RedisGetVideos(latestTime)
+	if err != nil {
+		return err, nil, 0
+	}
+
+	// mysql 获取视频
+	// videoListRaw, err := db.GetVideosByLastTime(ctx, latestTime, 30)
 
 	flag := false
 	if token != "" {
@@ -18,7 +25,7 @@ func FeedService(ctx context.Context, latestTime int64, token string) (err error
 	}
 
 	videoListRes = make([]*video.Video, 0) //存的元素类型是指针，而不是对象本身
-	for _, value := range videoListRaw {
+	for _, value := range videoListFromRedis {
 
 		//如果登入
 		if flag {
@@ -48,5 +55,5 @@ func FeedService(ctx context.Context, latestTime int64, token string) (err error
 	}
 	/*time1 := videoListRaw[len(videoListRaw)].CreateTime.UnixMilli()
 	fmt.Println(time1)*/
-	return nil, videoListRes, videoListRaw[len(videoListRaw)-1].CreateTime.UnixMilli()
+	return nil, videoListRes, videoListFromRedis[len(videoListFromRedis)-1].CreateTime.UnixMilli()
 }

@@ -53,7 +53,23 @@ service video {
   rpc Feed(douyin_feed_request) returns(douyin_feed_response){
     option(api.get) = "douyin/feed/";
   }
+  rpc publish_action(douyin_publish_action_request) returns(douyin_publish_action_response) {
+
+    option(api.post) = "douyin/publish/action";
+  }
 }
+/* ------------------/douyin/publish/action/ - 视频投稿---------------- */
+message douyin_publish_action_request {
+  string token = 1; // 用户鉴权token
+  bytes data = 2; // 视频数据
+  string title = 3; // 视频标题
+}
+
+message douyin_publish_action_response {
+  int32 status_code = 1; // 状态码，0-成功，其他值-失败
+  string status_msg = 2; // 返回状态描述
+}
+
 
 /* -----------------用户---------------- */
 
