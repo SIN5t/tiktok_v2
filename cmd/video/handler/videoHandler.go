@@ -45,7 +45,10 @@ func (s *VideoServiceImpl) PublishAction(ctx context.Context, req *video.Publish
 	//将请求中的视频（[]byte）拿出来,保存到temp目录下，之后交给消息队列处理，上传oss等
 	fileName := strings.Replace(uuid.New().String(), "-", "", -1) + ".mp4" //为视频生成唯一的视频名称
 	filePath := config.TempVideoLocation + fileName                        // 存在 ./temp临时目录下
-	os.MkdirAll(config.TempVideoLocation, os.ModePerm)                     // 路径存在不会做任何操作，返回一个nil
+	err = os.MkdirAll(config.TempVideoLocation, os.ModePerm)
+	if err != nil {
+		return nil, err
+	} // 路径存在不会做任何操作，返回一个nil
 	err = os.WriteFile(filePath, req.GetData(), config.FileAuth)
 	if err != nil {
 		resp = &video.PublishActionResponse{
@@ -55,7 +58,7 @@ func (s *VideoServiceImpl) PublishAction(ctx context.Context, req *video.Publish
 		return resp, err
 	}
 
-	//封装消息，调用消息队列，发布消息上传的任务
+	//封装消息，调用消息队列，发布消息上传的任务,注意也要发送当前作者的id
 
 	resp = &video.PublishActionResponse{
 		StatusCode: config.Success,

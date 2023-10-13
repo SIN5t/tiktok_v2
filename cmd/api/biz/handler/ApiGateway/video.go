@@ -81,4 +81,5 @@ func PublishAction(ctx context.Context, c *app.RequestContext) {
 	//resp := new(ApiGateway.DouyinPublishActionResponse)
 
 	c.JSON(consts.StatusOK, response)
+
 }
