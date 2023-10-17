@@ -52,7 +52,8 @@ func InitUserClient() {
 }
 
 func Login(ctx context.Context, request *user.UserLoginRequest) (*user.UserLoginResponse, error) {
-	return nil, nil
+	resp, err := userClient.Login(ctx, request)
+	return resp, err
 }
 
 func Register(ctx context.Context, req *user.UserRegisterRequest) (*user.UserRegisterResponse, error) {

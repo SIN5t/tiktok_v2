@@ -50,3 +50,23 @@ func _publishactionMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _publishlistMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _userinfoMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _loginMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _userloginMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

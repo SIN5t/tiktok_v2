@@ -10,3 +10,6 @@ etcd:
 otel:
   host: 0.0.0.0
   port: 4317 # OTLP gRPC receiver
+
+snowflake:
+  node: 1

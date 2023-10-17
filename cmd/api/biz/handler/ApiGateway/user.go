@@ -8,9 +8,8 @@ import (
 	"github.com/SIN5t/tiktok_v2/cmd/api/rpc"
 	config "github.com/SIN5t/tiktok_v2/config/const"
 	"github.com/SIN5t/tiktok_v2/kitex_gen/user"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
-
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
@@ -18,9 +17,15 @@ import (
 // @router /douyin/user/register/ [POST]
 func UserRegister(ctx context.Context, c *app.RequestContext) {
 
+	var apiReq ApiGateway.DouyinUserRegisterRequest
+	err := c.BindAndValidate(&apiReq)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
 	req := &user.UserRegisterRequest{
-		Username: c.PostForm("username"),
-		Password: c.PostForm("password"),
+		Username: apiReq.GetUsername(),
+		Password: apiReq.GetPassword(),
 	}
 	response, err := rpc.Register(ctx, req)
 	if err != nil {
@@ -33,4 +38,44 @@ func UserRegister(ctx context.Context, c *app.RequestContext) {
 	//response 这里是kitex的，转为ApiGateway的比较好
 	c.JSON(consts.StatusOK, response)
 
+}
+
+// UserLogin .
+// @router /douyin/user/login/ [POST]
+func UserLogin(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req ApiGateway.DouyinUserLoginRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+	response, err := rpc.Login(ctx, &user.UserLoginRequest{
+		Username: req.Username,
+		Password: req.Password,
+	})
+	if err != nil {
+		c.JSON(consts.StatusOK, ApiGateway.DouyinUserLoginResponse{
+			StatusCode: config.FailResponse,
+			StatusMsg:  "用户名密码验证失败",
+		})
+		hlog.Fatalf("rpc.Login failed, err: %v", err.Error())
+	}
+	c.JSON(consts.StatusOK, response)
+}
+
+// UserInfo .
+// @router /douyin/user/ [GET]
+func UserInfo(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req ApiGateway.DouyinUserRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(ApiGateway.DouyinUserResponse)
+
+	c.JSON(consts.StatusOK, resp)
 }

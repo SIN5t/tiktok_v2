@@ -5,12 +5,15 @@ option go_package = "ApiGateway";
 
 import "api.proto";
 
+/* ------------------基础接口---------------- */
+
+
 message BaseResp {
   int32 status_code = 1; // 状态码，0-成功，其他值-失败
   string status_msg = 2; // 返回状态描述--可选
 }
 
-/* ------------------/douyin/feed/ - 视频流接口---------------- */
+/* ------------------视频接口---------------- */
 message douyin_feed_request {
   int64 latest_time = 1; // 可选参数，限制返回视频的最新投稿时间戳，精确到秒，不填表示当前时间
   string token = 2; // 可选参数，登录用户设置
@@ -49,16 +52,6 @@ message Video{
   string title = 8; // 视频标题
 }
 
-service video {
-  rpc Feed(douyin_feed_request) returns(douyin_feed_response){
-    option(api.get) = "douyin/feed/";
-  }
-  rpc publish_action(douyin_publish_action_request) returns(douyin_publish_action_response) {
-
-    option(api.post) = "douyin/publish/action";
-  }
-}
-/* ------------------/douyin/publish/action/ - 视频投稿---------------- */
 message douyin_publish_action_request {
   string token = 1; // 用户鉴权token
   bytes data = 2; // 视频数据
@@ -70,6 +63,28 @@ message douyin_publish_action_response {
   string status_msg = 2; // 返回状态描述
 }
 
+message douyin_publish_list_request {
+   int64 user_id = 1; // 用户id
+   string token = 2; // 用户鉴权token
+}
+
+message douyin_publish_list_response {
+   int32 status_code = 1; // 状态码，0-成功，其他值-失败
+   string status_msg = 2; // 返回状态描述
+   Video video_list = 3; // 用户发布的视频列表
+}
+
+service video {
+  rpc Feed(douyin_feed_request) returns(douyin_feed_response){
+    option(api.get) = "douyin/feed/";
+  }
+  rpc publish_action(douyin_publish_action_request) returns(douyin_publish_action_response) {
+    option(api.post) = "douyin/publish/action";
+  }
+  rpc  publish_list(douyin_publish_list_request) returns(douyin_publish_list_response) {
+    option(api.get) = "douyin/publish/list";
+  }
+}
 
 /* -----------------用户---------------- */
 
@@ -85,8 +100,36 @@ message douyin_user_register_response {
   string token = 4; // 用户鉴权token
 }
 
+message douyin_user_login_request {
+  string username = 1; // 注册用户名，最长32个字符
+  string password = 2; // 密码，最长32个字符
+}
+
+message douyin_user_login_response {
+  int32 status_code = 1; // 状态码，0-成功，其他值-失败
+  string status_msg = 2; // 返回状态描述
+  int64 user_id = 3; // 用户id
+  string token = 4; // 用户鉴权token
+}
+message douyin_user_request {
+  int64 user_id = 1; // 用户id
+  string token = 2; // 用户鉴权token
+}
+
+message douyin_user_response {
+   int32 status_code = 1; // 状态码，0-成功，其他值-失败
+   string status_msg = 2; // 返回状态描述
+   User user = 3; // 用户信息
+}
 service user {
   rpc UserRegister(douyin_user_register_request) returns (douyin_user_register_response){
     option(api.post) = "/douyin/user/register/";
+  }
+  rpc UserLogin(douyin_user_login_request) returns (douyin_user_login_response){
+    option(api.post) = "/douyin/user/login/";
+  }
+  //用户信息
+  rpc UserInfo(douyin_user_request) returns (douyin_user_response){
+    option(api.get) = "/douyin/user/";
   }
 }
