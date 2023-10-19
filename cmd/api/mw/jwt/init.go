@@ -2,9 +2,10 @@ package jwt
 
 import (
 	"context"
-	db2 "github.com/SIN5t/tiktok_v2/cmd/user/dal"
-	"github.com/SIN5t/tiktok_v2/cmd/user/service"
-	utils2 "github.com/SIN5t/tiktok_v2/pkg/jwt/utils"
+	"github.com/SIN5t/tiktok_v2/cmd/api/biz/model/ApiGateway"
+	"github.com/SIN5t/tiktok_v2/cmd/api/rpc"
+	config "github.com/SIN5t/tiktok_v2/config/const"
+	"github.com/SIN5t/tiktok_v2/kitex_gen/user"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/common/utils"
@@ -15,7 +16,7 @@ import (
 
 var (
 	JwtMiddleware *jwt.HertzJWTMiddleware
-	IdentityKey   = "identity"
+	IdentityKey   = config.JwtIdentityKey
 )
 
 func InitJwt() {
@@ -35,38 +36,39 @@ func InitJwt() {
 				"message": "success",
 			})
 		},
-		// login会调用这里的方法！所以这里要自己写
+		// LoginHandler 将调用该方法，返回值中含有userId,后面用于保存到jwt的MapClaims中
 		Authenticator: func(ctx context.Context, c *app.RequestContext) (interface{}, error) {
-			var loginStruct struct {
-				Username string `form:"account" json:"account" query:"username" vd:"(len($) > 0 && len($) < 30); msg:'Illegal format'"`
-				Password string `form:"password" json:"password" query:"password" vd:"(len($) > 0 && len($) < 30); msg:'Illegal format'"`
-			}
-			if err := c.BindAndValidate(&loginStruct); err != nil {
+			var req = &ApiGateway.DouyinUserLoginRequest{}
+			if err := c.BindAndValidate(req); err != nil {
 				return nil, err
 			}
-			// TODO 这里应该调用rpc的方法，因为将来rpc是在当前的模块下的，而user不在，不能直接调它的service
-			users, err := service.CheckUser(loginStruct.Username, utils2.MD5(loginStruct.Password))
+			if len(req.Username) == 0 || len(req.Password) == 0 {
+				return "", jwt.ErrMissingLoginValues
+			}
+			// 这里应该调用rpc的方法，因为user不在当前服务下，不能直接调它的service
+			loginResponse, err := rpc.Login(ctx, &user.UserLoginRequest{Username: req.Username, Password: req.Password})
 			if err != nil {
 				return nil, err
 			}
 
-			return users, nil
+			return loginResponse.UserId, nil
 		},
-		IdentityKey: IdentityKey,
-		IdentityHandler: func(ctx context.Context, c *app.RequestContext) interface{} {
-			claims := jwt.ExtractClaims(ctx, c)
-			return &db2.UserReg{
-				UserId: claims[IdentityKey].(int64),
-			}
-		},
-		// PayloadFunc：用于在登录时向 JWT 添加额外负载数据的回调函数
+		// PayloadFunc：用于在登录时向 JWT 添加额外负载数据的回调函数 例如添加了userId，这个userId来自上面的Authenticator
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
-			if v, ok := data.(*db2.UserReg); ok {
+			if v, ok := data.(int64); ok {
 				return jwt.MapClaims{
-					IdentityKey: v.UserId,
+					IdentityKey: v,
 				}
 			}
 			return jwt.MapClaims{}
+		},
+		IdentityKey: IdentityKey,
+		// 这个是在外部调用auth的时候调用的,用于设置获取身份信息的函数，此处提取 token 的负载，并配合 IdentityKey 将用户id存入上下文信息。
+		IdentityHandler: func(ctx context.Context, c *app.RequestContext) interface{} {
+			claims := jwt.ExtractClaims(ctx, c)
+			return &ApiGateway.User{
+				Id: claims[IdentityKey].(int64),
+			}
 		},
 		HTTPStatusMessageFunc: func(e error, ctx context.Context, c *app.RequestContext) string {
 			hlog.CtxErrorf(ctx, "jwt biz err = %+v", e.Error())

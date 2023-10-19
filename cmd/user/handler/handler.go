@@ -56,8 +56,13 @@ func (s *UserServiceImpl) Register(ctx context.Context, req *user.UserRegisterRe
 
 // Login implements the UserServiceImpl interface.
 func (s *UserServiceImpl) Login(ctx context.Context, req *user.UserLoginRequest) (resp *user.UserLoginResponse, err error) {
-	// TODO: Your code here...
-	return
+	userBasicInfo, err := service.CheckUser(req.GetUsername(), req.GetPassword())
+	if err == nil {
+		return &user.UserLoginResponse{
+			UserId: userBasicInfo.UserId,
+		}, nil
+	}
+	return nil, err
 }
 
 // UserInfo implements the UserServiceImpl interface.

@@ -6,6 +6,8 @@ import (
 	"github.com/SIN5t/tiktok_v2/cmd/video/handler"
 	"github.com/SIN5t/tiktok_v2/kitex_gen/video/videoservice"
 	"github.com/SIN5t/tiktok_v2/pkg/etcd"
+	KafkaVideo "github.com/SIN5t/tiktok_v2/pkg/kafka/video"
+	"github.com/SIN5t/tiktok_v2/pkg/minio"
 	"github.com/SIN5t/tiktok_v2/pkg/viper"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
@@ -28,8 +30,14 @@ var (
 )
 
 func main() {
+
 	db.InitMysqlDB()
 	db.InitRdb()
+	minio.InitMinIo()
+
+	// 先开启消费者,消费者会阻塞，需要开一个goroutine
+	go KafkaVideo.ConsumePubActMsg(KafkaVideo.NewConsumer())
+
 	//服务注册
 	registry, err := etcd.NewEtcdRegistry([]string{etcdAddr})
 	if err != nil {

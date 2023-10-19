@@ -7,7 +7,7 @@ import (
 func SaveUserToMysql(user *db.UserReg) error {
 
 	//将该用户存入mysql数据库
-	return db.UserMysqlDB.Create(&user).Error
+	return db.UserMysqlDB.Create(user).Error
 }
 
 // NameExist 如果用户名存在，返回true，否则返回false

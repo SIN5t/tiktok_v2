@@ -10,10 +10,9 @@ func TestKafkaVideoUpload(t *testing.T) {
 		VideoPath: "/temp/",
 		VideoName: "4asdcsadc.mp4",
 		AuthorId:  646156413,
-		Title:     "元神启动",
+		Title:     "元神启动2",
 	}
 	video.ProduceMsg(video.NewProducer(), msg)
-
 }
 func TestAlone(t *testing.T) {
 	consumer := video.NewConsumer()

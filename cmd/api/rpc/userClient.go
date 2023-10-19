@@ -59,4 +59,5 @@ func Login(ctx context.Context, request *user.UserLoginRequest) (*user.UserLogin
 func Register(ctx context.Context, req *user.UserRegisterRequest) (*user.UserRegisterResponse, error) {
 	resp, err := userClient.Register(ctx, req)
 	return resp, err
+
 }

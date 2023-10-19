@@ -3,6 +3,7 @@
 package ApiGateway
 
 import (
+	"github.com/SIN5t/tiktok_v2/cmd/api/mw/jwt"
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -41,9 +42,12 @@ func _userregisterMw() []app.HandlerFunc {
 	return nil
 }
 
+// group : /publish/...
 func _publishMw() []app.HandlerFunc {
-	// your code...
-	return nil
+
+	return []app.HandlerFunc{
+		jwt.JwtMiddleware.MiddlewareFunc(),
+	}
 }
 
 func _publishactionMw() []app.HandlerFunc {
@@ -57,8 +61,9 @@ func _publishlistMw() []app.HandlerFunc {
 }
 
 func _userinfoMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		jwt.JwtMiddleware.MiddlewareFunc(),
+	}
 }
 
 func _loginMw() []app.HandlerFunc {

@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"github.com/IBM/sarama"
 	config "github.com/SIN5t/tiktok_v2/config/const"
+	"github.com/SIN5t/tiktok_v2/pkg/minio"
 	"github.com/SIN5t/tiktok_v2/pkg/viper"
 	"log"
+	"os"
 )
 
 import (
@@ -93,6 +95,7 @@ func NewConsumer() sarama.Consumer {
 }
 
 func ConsumePubActMsg(consumer sarama.Consumer) {
+
 	// 拿到当前的Topic的所有partition
 	partitions, err := consumer.Partitions(config.KafkaVideoTopic)
 	if err != nil {
@@ -100,6 +103,7 @@ func ConsumePubActMsg(consumer sarama.Consumer) {
 	}
 
 	endChan := make(chan bool)
+
 	for _, partition := range partitions {
 
 		//创建当前分区的消费者
@@ -112,22 +116,41 @@ func ConsumePubActMsg(consumer sarama.Consumer) {
 		go func(pc sarama.PartitionConsumer) {
 			defer pc.AsyncClose()
 			for msg := range pc.Messages() {
-				//fmt.Printf("Received message: %s\n", string(msg.Value))
+				/*pc.Messages() 是一个阻塞调用
+				//当消费者从 pc.Messages() 消费到一条消息时，会执行相应的处理逻辑，然后再次进入循环等待下一条消息。
+				//只有当分区消费者 pc 被关闭（通过 defer pc.AsyncClose()）或者出现错误时，才会退出这个循*/
 
+				fmt.Printf("Received message: %s\n, start to processing msg...", string(msg.Value))
 				videoMsg := &VideoMsg{}
 				err := json.Unmarshal(msg.Value, videoMsg)
 				if err != nil {
 					log.Fatal(err.Error())
 				}
-				fmt.Println(videoMsg.VideoName)
-				fmt.Println(videoMsg.VideoPath)
-				fmt.Println(videoMsg.AuthorId)
-				fmt.Println(videoMsg.Title)
+
+				// 所有操作完成之后，删除临时文件
+				defer func() {
+					os.Remove(videoMsg.VideoPath)
+				}()
+
+				// 上传OSS, 确保视频服务开启(InitMinio)
+				go func() {
+					minioViper := viper.Init("minio")
+					minio.UploadFile(minioViper.GetString("video_bucket"), videoMsg.VideoName, videoMsg.VideoPath)
+
+					// 截帧，上传图片
+
+				}()
+
+				// 上传redis
+
+				// 上传mysql
 
 			}
+			// 设置超时时间自动关闭？ 还是应该一直开着
 			endChan <- true
 		}(partitionConsumer)
 	}
-	<-endChan              // 小心死锁，上面endChan <- true 这里才会执行
+
+	<-endChan              // 小心死锁，上面 endChan <- true 这里才会执行
 	defer consumer.Close() // TODO 实际需改
 }

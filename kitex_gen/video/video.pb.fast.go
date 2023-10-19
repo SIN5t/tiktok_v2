@@ -290,6 +290,11 @@ func (x *PublishActionRequest) FastRead(buf []byte, _type int8, number int32) (o
 		if err != nil {
 			goto ReadFieldError
 		}
+	case 4:
+		offset, err = x.fastReadField4(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
 	default:
 		offset, err = fastpb.Skip(buf, _type, number)
 		if err != nil {
@@ -315,6 +320,11 @@ func (x *PublishActionRequest) fastReadField2(buf []byte, _type int8) (offset in
 
 func (x *PublishActionRequest) fastReadField3(buf []byte, _type int8) (offset int, err error) {
 	x.Title, offset, err = fastpb.ReadString(buf, _type)
+	return offset, err
+}
+
+func (x *PublishActionRequest) fastReadField4(buf []byte, _type int8) (offset int, err error) {
+	x.UserId, offset, err = fastpb.ReadInt64(buf, _type)
 	return offset, err
 }
 
@@ -646,6 +656,7 @@ func (x *PublishActionRequest) FastWrite(buf []byte) (offset int) {
 	offset += x.fastWriteField1(buf[offset:])
 	offset += x.fastWriteField2(buf[offset:])
 	offset += x.fastWriteField3(buf[offset:])
+	offset += x.fastWriteField4(buf[offset:])
 	return offset
 }
 
@@ -670,6 +681,14 @@ func (x *PublishActionRequest) fastWriteField3(buf []byte) (offset int) {
 		return offset
 	}
 	offset += fastpb.WriteString(buf[offset:], 3, x.GetTitle())
+	return offset
+}
+
+func (x *PublishActionRequest) fastWriteField4(buf []byte) (offset int) {
+	if x.UserId == 0 {
+		return offset
+	}
+	offset += fastpb.WriteInt64(buf[offset:], 4, x.GetUserId())
 	return offset
 }
 
@@ -967,6 +986,7 @@ func (x *PublishActionRequest) Size() (n int) {
 	n += x.sizeField1()
 	n += x.sizeField2()
 	n += x.sizeField3()
+	n += x.sizeField4()
 	return n
 }
 
@@ -991,6 +1011,14 @@ func (x *PublishActionRequest) sizeField3() (n int) {
 		return n
 	}
 	n += fastpb.SizeString(3, x.GetTitle())
+	return n
+}
+
+func (x *PublishActionRequest) sizeField4() (n int) {
+	if x.UserId == 0 {
+		return n
+	}
+	n += fastpb.SizeInt64(4, x.GetUserId())
 	return n
 }
 
@@ -1115,6 +1143,7 @@ var fieldIDToName_PublishActionRequest = map[int32]string{
 	1: "Token",
 	2: "Data",
 	3: "Title",
+	4: "UserId",
 }
 
 var fieldIDToName_PublishActionResponse = map[int32]string{

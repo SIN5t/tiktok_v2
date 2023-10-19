@@ -36,12 +36,14 @@ func InitMysqlDB() {
 		mysql.Open(mysqlDSN),
 		&gorm.Config{
 			Logger: logger.New(
+				//log.New(os.Stdout, "\r\n", log.LstdFlags), // TODO 改为openTelemetry
 				logrus.NewWriter(), // 自定义日志输出,来自openTelemetry
 				logger.Config{
 					SlowThreshold: time.Second, // 慢 SQL 阈值
 					LogLevel:      logger.Info, // Log level
 					Colorful:      true,        // 彩色打印
-				})},
+				}),
+		},
 	)
 	if err != nil {
 		klog.Fatal("fail to initializeLog db: ", err.Error())

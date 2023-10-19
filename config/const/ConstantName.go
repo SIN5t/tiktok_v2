@@ -6,7 +6,8 @@ const (
 	KafkaVideoTopic    = "publishVideo"
 	KafkaVideoProducer = "123456789"
 	KafkaVideoConsumer = "12345678910"
-	jwtSigningKey      = "signing-key"
+	JwtSigningKey      = "signing-key"
+	JwtIdentityKey     = "userId"
 )
 
 const (

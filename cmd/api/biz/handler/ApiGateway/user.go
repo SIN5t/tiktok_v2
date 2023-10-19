@@ -5,6 +5,7 @@ package ApiGateway
 import (
 	"context"
 	"github.com/SIN5t/tiktok_v2/cmd/api/biz/model/ApiGateway"
+	"github.com/SIN5t/tiktok_v2/cmd/api/mw/jwt"
 	"github.com/SIN5t/tiktok_v2/cmd/api/rpc"
 	config "github.com/SIN5t/tiktok_v2/config/const"
 	"github.com/SIN5t/tiktok_v2/kitex_gen/user"
@@ -43,25 +44,11 @@ func UserRegister(ctx context.Context, c *app.RequestContext) {
 // UserLogin .
 // @router /douyin/user/login/ [POST]
 func UserLogin(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req ApiGateway.DouyinUserLoginRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-	response, err := rpc.Login(ctx, &user.UserLoginRequest{
-		Username: req.Username,
-		Password: req.Password,
-	})
-	if err != nil {
-		c.JSON(consts.StatusOK, ApiGateway.DouyinUserLoginResponse{
-			StatusCode: config.FailResponse,
-			StatusMsg:  "用户名密码验证失败",
-		})
-		hlog.Fatalf("rpc.Login failed, err: %v", err.Error())
-	}
-	c.JSON(consts.StatusOK, response)
+	//先执行Authenticator--期间失败则执行unauthorized&HTTPStatusMessageFunc
+	//随后创建token
+	//若PayloadFunc不为空，则此时执行PayloadFunc
+	//最后执行LoginResponse返回信息
+	jwt.JwtMiddleware.LoginHandler(ctx, c)
 }
 
 // UserInfo .

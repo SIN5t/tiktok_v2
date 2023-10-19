@@ -38,6 +38,7 @@ message PublishActionRequest{
   string token = 1;
   bytes data = 2;
   string title = 3;
+  int64 UserId = 4;
 }
 message PublishActionResponse {
   int32 status_code = 1;
