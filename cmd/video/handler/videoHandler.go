@@ -45,7 +45,7 @@ func (s *VideoServiceImpl) PublishAction(ctx context.Context, req *video.Publish
 
 	//将请求中的视频（[]byte）拿出来,保存到temp目录下，之后交给消息队列处理，上传oss等
 	fileName := strings.Replace(uuid.New().String(), "-", "", -1) + ".mp4" //为视频生成唯一的视频名称
-	filePath := config.TempVideoLocation                                   // 存在 ./temp临时目录下
+	filePath := config.TempVideoLocation + fileName                        // 存在 ./temp临时目录下
 	err = os.MkdirAll(config.TempVideoLocation, os.ModePerm)
 	if err != nil {
 		return nil, err
@@ -62,7 +62,7 @@ func (s *VideoServiceImpl) PublishAction(ctx context.Context, req *video.Publish
 
 	// 封装消息，调用消息队列，发布消息上传的任务,注意也要发送当前作者的id
 	videoMsg := KafkaVideo.VideoMsg{
-		VideoPath: filePath,
+		VideoPath: filePath, //文件路径包含文件名
 		VideoName: fileName,
 		AuthorId:  req.UserId,
 		Title:     req.Title,

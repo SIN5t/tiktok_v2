@@ -126,24 +126,35 @@ func ConsumePubActMsg(consumer sarama.Consumer) {
 				if err != nil {
 					log.Fatal(err.Error())
 				}
-
-				// 所有操作完成之后，删除临时文件
-				defer func() {
-					os.Remove(videoMsg.VideoPath)
-				}()
-
-				// 上传OSS, 确保视频服务开启(InitMinio)
+				//每个消息开goroutine并行地执行
 				go func() {
+					// 所有操作完成之后，删除临时文件
+					defer func() {
+						err := os.Remove(videoMsg.VideoPath)
+						if err != nil {
+							klog.Errorf("删除文件失败: %s", err.Error())
+							return
+						} // 文件路径包含文件名
+					}()
+
+					// 上传OSS
 					minioViper := viper.Init("minio")
-					minio.UploadFile(minioViper.GetString("video_bucket"), videoMsg.VideoName, videoMsg.VideoPath)
+					contentType := minioViper.GetString("contentType.video")
+
+					err := minio.UploadFile(minioViper.GetString("video_bucket"), videoMsg.VideoName, videoMsg.VideoPath, contentType)
+					if err != nil {
+						klog.Errorf("视频上传至OSS失败: %s", err.Error())
+						return
+					}
 
 					// 截帧，上传图片
 
+					// 确保视频上传完毕后，再开并行的goroutine，执行可并行的任务
+					// 上传redis
+
+					// 上传mysql
+
 				}()
-
-				// 上传redis
-
-				// 上传mysql
 
 			}
 			// 设置超时时间自动关闭？ 还是应该一直开着

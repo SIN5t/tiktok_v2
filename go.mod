@@ -4,20 +4,25 @@ go 1.20
 
 require (
 	github.com/IBM/sarama v1.41.2
+	github.com/alexedwards/argon2id v0.0.0-20230305115115-4b3c3280a736
+	github.com/bwmarrin/snowflake v0.3.0
 	github.com/cloudwego/fastpb v0.0.4
 	github.com/cloudwego/hertz v0.6.8
 	github.com/cloudwego/kitex v0.7.0
 	github.com/disintegration/imaging v1.6.2
 	github.com/golang/protobuf v1.5.3
 	github.com/google/uuid v1.3.0
+	github.com/hertz-contrib/jwt v1.0.2
 	github.com/hertz-contrib/obs-opentelemetry/tracing v0.3.0
 	github.com/hertz-contrib/pprof v0.1.1
 	github.com/kitex-contrib/obs-opentelemetry v0.2.3
+	github.com/minio/minio-go/v7 v7.0.63
 	github.com/prometheus/common v0.26.0
 	github.com/redis/go-redis/v9 v9.1.0
 	github.com/spf13/viper v1.16.0
 	github.com/u2takey/ffmpeg-go v0.5.0
 	go.etcd.io/etcd/client/v3 v3.5.9
+	go.uber.org/zap v1.21.0
 	golang.org/x/net v0.15.0
 	google.golang.org/protobuf v1.31.0
 	gorm.io/driver/mysql v1.5.1
@@ -29,11 +34,9 @@ require (
 require (
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 // indirect
 	github.com/alecthomas/units v0.0.0-20190924025748-f65c72e2690d // indirect
-	github.com/alexedwards/argon2id v0.0.0-20230305115115-4b3c3280a736 // indirect
 	github.com/andeya/goutil v1.0.0 // indirect
 	github.com/apache/thrift v0.13.0 // indirect
 	github.com/aws/aws-sdk-go v1.38.20 // indirect
-	github.com/bwmarrin/snowflake v0.3.0 // indirect
 	github.com/bytedance/go-tagexpr/v2 v2.9.6 // indirect
 	github.com/bytedance/gopkg v0.0.0-20230728082804-614d0af6619b // indirect
 	github.com/bytedance/sonic v1.9.1 // indirect
@@ -72,7 +75,6 @@ require (
 	github.com/hashicorp/go-uuid v1.0.3 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/henrylee2cn/ameda v1.5.1 // indirect
-	github.com/hertz-contrib/jwt v1.0.2 // indirect
 	github.com/iancoleman/strcase v0.2.0 // indirect
 	github.com/jcmturner/aescts/v2 v2.0.0 // indirect
 	github.com/jcmturner/dnsutils/v2 v2.0.0 // indirect
@@ -88,7 +90,6 @@ require (
 	github.com/klauspost/cpuid/v2 v2.2.5 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
-	github.com/minio/minio-go/v7 v7.0.63 // indirect
 	github.com/minio/sha256-simd v1.0.1 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
@@ -131,7 +132,6 @@ require (
 	go.opentelemetry.io/proto/otlp v0.19.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	go.uber.org/zap v1.21.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/crypto v0.13.0 // indirect
 	golang.org/x/image v0.0.0-20220302094943-723b81ca9867 // indirect
