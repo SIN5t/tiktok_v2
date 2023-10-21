@@ -22,7 +22,8 @@ func InitMinIo() {
 	picBucket := minioViper.GetString("pic_bucket")
 	location := minioViper.GetString("location")
 
-	minioClient, err := minio.New(endpoint, &minio.Options{
+	var err error
+	MinioClient, err = minio.New(endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
 		Secure: useSSL,
 	})
@@ -30,27 +31,26 @@ func InitMinIo() {
 	if err != nil {
 		klog.Fatal(err.Error())
 	}
-
-	klog.Info("%v\n", minioClient)
+	klog.Infof("%v\n", MinioClient)
 	klog.Info("初始化成功")
 
 	// Make new buckets
-	err = minioClient.MakeBucket(context.Background(), videoBucket, minio.MakeBucketOptions{Region: location})
+	err = MinioClient.MakeBucket(context.Background(), videoBucket, minio.MakeBucketOptions{Region: location})
 	if err != nil {
 		// Check to see if we already own this bucket (which happens if you run this twice)
-		exists, errBucketExists := minioClient.BucketExists(context.Background(), videoBucket)
+		exists, errBucketExists := MinioClient.BucketExists(context.Background(), videoBucket)
 		if errBucketExists == nil && exists {
-			klog.Info("We already own %s\n", videoBucket)
+			klog.Infof("We already own bucket： %s\n", videoBucket)
 		} else {
 			klog.Fatal(err)
 		}
 	}
-	err = minioClient.MakeBucket(context.Background(), picBucket, minio.MakeBucketOptions{Region: location})
+	err = MinioClient.MakeBucket(context.Background(), picBucket, minio.MakeBucketOptions{Region: location})
 	if err != nil {
 		// Check to see if we already own this bucket (which happens if you run this twice)
-		exists, errBucketExists := minioClient.BucketExists(context.Background(), picBucket)
+		exists, errBucketExists := MinioClient.BucketExists(context.Background(), picBucket)
 		if errBucketExists == nil && exists {
-			klog.Info("We already own %s\n", picBucket)
+			klog.Infof("We already own bucket： %s\n", picBucket)
 		} else {
 			klog.Fatal(err)
 		}
@@ -61,10 +61,19 @@ func InitMinIo() {
 func UploadFile(bucketName string, objectName string, filePath string) error {
 
 	// 上传的文件不显示特定的内容类型（例如二进制文件），则可以将 ContentType 设置为空字符串。
-	info, err := MinioClient.FPutObject(context.Background(), bucketName, objectName, filePath, minio.PutObjectOptions{ContentType: ""})
+	info, err := MinioClient.FPutObject(context.Background(), bucketName, objectName, filePath+objectName, minio.PutObjectOptions{ContentType: ""})
 	if err != nil {
+		klog.Debugf("error occurred %s\n", err.Error())
 		return err
 	}
 	klog.Info(info)
+	return nil
+}
+
+func DownloadFile(bucketName string, objectName string, fileDownloadPath string) error {
+	err := MinioClient.FGetObject(context.Background(), bucketName, objectName, fileDownloadPath+objectName, minio.GetObjectOptions{})
+	if err != nil {
+		return err
+	}
 	return nil
 }

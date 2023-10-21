@@ -1,5 +1,5 @@
 server:
-  host: 0.0.0.0
+  host: localhost
   port: 9000
 
 MINIO_ROOT_USER: minioadmin
@@ -8,4 +8,4 @@ MINIO_ROOT_PASSWORD: minioadmin
 video_bucket: video
 pic_bucket: picture
 
-location: us-east-1
+location: local
