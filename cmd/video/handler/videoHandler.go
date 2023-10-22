@@ -6,6 +6,7 @@ import (
 	config "github.com/SIN5t/tiktok_v2/config/const"
 	"github.com/SIN5t/tiktok_v2/kitex_gen/video"
 	KafkaVideo "github.com/SIN5t/tiktok_v2/pkg/kafka/video"
+	"github.com/SIN5t/tiktok_v2/pkg/viper"
 	"github.com/google/uuid"
 	"github.com/prometheus/common/log"
 	"os"
@@ -43,15 +44,13 @@ func (s *VideoServiceImpl) Feed(ctx context.Context, req *video.FeedRequest) (re
 // PublishAction implements the VideoServiceImpl interface.
 func (s *VideoServiceImpl) PublishAction(ctx context.Context, req *video.PublishActionRequest) (resp *video.PublishActionResponse, err error) {
 
+	videoViper := viper.Init("video")
+	tempVideoLoc := videoViper.GetString("location.video")
+
 	//将请求中的视频（[]byte）拿出来,保存到temp目录下，之后交给消息队列处理，上传oss等
 	fileName := strings.Replace(uuid.New().String(), "-", "", -1) + ".mp4" //为视频生成唯一的视频名称
-	filePath := config.TempVideoLocation + fileName                        // 存在 ./temp临时目录下
-	err = os.MkdirAll(config.TempVideoLocation, os.ModePerm)
-	if err != nil {
-		return nil, err
-	} // 路径存在不会做任何操作，返回一个nil
-	err = os.WriteFile(filePath, req.GetData(), config.FileAuth)
-
+	filePath := tempVideoLoc + fileName                                    // 存在 ./temp/video/临时目录下
+	err = os.WriteFile(filePath, req.GetData(), config.FileAuth)           //路径不存在自动创建
 	if err != nil {
 		resp = &video.PublishActionResponse{
 			StatusCode: config.FailResponse,

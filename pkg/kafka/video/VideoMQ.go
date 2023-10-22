@@ -3,11 +3,12 @@ package video
 import (
 	"fmt"
 	"github.com/IBM/sarama"
+	"github.com/SIN5t/tiktok_v2/cmd/video/service"
 	config "github.com/SIN5t/tiktok_v2/config/const"
 	"github.com/SIN5t/tiktok_v2/pkg/minio"
 	"github.com/SIN5t/tiktok_v2/pkg/viper"
 	"log"
-	"os"
+	"strings"
 )
 
 import (
@@ -120,26 +121,22 @@ func ConsumePubActMsg(consumer sarama.Consumer) {
 				//当消费者从 pc.Messages() 消费到一条消息时，会执行相应的处理逻辑，然后再次进入循环等待下一条消息。
 				//只有当分区消费者 pc 被关闭（通过 defer pc.AsyncClose()）或者出现错误时，才会退出这个循*/
 
-				fmt.Printf("Received message: %s\n, start to processing msg...", string(msg.Value))
+				fmt.Printf("Received message: %s\n, start to processing msg...\n", string(msg.Value))
 				videoMsg := &VideoMsg{}
 				err := json.Unmarshal(msg.Value, videoMsg)
 				if err != nil {
 					log.Fatal(err.Error())
 				}
-				//每个消息开goroutine并行地执行
+				//每个消息开goroutine并行执行
 				go func() {
-					// 所有操作完成之后，删除临时文件
-					defer func() {
-						err := os.Remove(videoMsg.VideoPath)
-						if err != nil {
-							klog.Errorf("删除文件失败: %s", err.Error())
-							return
-						} // 文件路径包含文件名
-					}()
 
 					// 上传OSS
 					minioViper := viper.Init("minio")
+					videoViper := viper.Init("video")
 					contentType := minioViper.GetString("contentType.video")
+
+					picName := strings.TrimSuffix(videoMsg.VideoName, "mp4") + "jpeg"
+					tempJpegFrameLoc := videoViper.GetString("location.pic") + picName
 
 					err := minio.UploadFile(minioViper.GetString("video_bucket"), videoMsg.VideoName, videoMsg.VideoPath, contentType)
 					if err != nil {
@@ -148,11 +145,34 @@ func ConsumePubActMsg(consumer sarama.Consumer) {
 					}
 
 					// 截帧，上传图片
+					service.GetJpegFromFfmpeg(videoMsg.VideoPath, tempJpegFrameLoc, picName, 10)
+					err = minio.UploadFile(minioViper.GetString("pic_bucket"), picName, tempJpegFrameLoc, contentType)
+					if err != nil {
+						klog.Fatalf("视频帧图片上传到OSS失败：", err.Error())
+						return
+					}
+
+					// 所有操作完成之后，删除临时文件
+					defer func() {
+						// TODO 测试阶段，不删除测试视频
+						//err := os.Remove(videoMsg.VideoPath)
+						//err = os.Remove(tempJpegFrameLoc)
+						if err != nil {
+							klog.Errorf("删除文件失败: %s", err.Error())
+							return
+						} // 文件路径包含文件名
+					}()
 
 					// 确保视频上传完毕后，再开并行的goroutine，执行可并行的任务
-					// 上传redis
 
+					// 上传redis
+					go func() {
+						return
+					}()
 					// 上传mysql
+					go func() {
+						return
+					}()
 
 				}()
 
