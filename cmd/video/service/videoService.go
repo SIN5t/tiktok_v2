@@ -3,6 +3,7 @@ package service
 import (
 	db "github.com/SIN5t/tiktok_v2/cmd/video/dal"
 	"github.com/SIN5t/tiktok_v2/kitex_gen/video"
+	"github.com/SIN5t/tiktok_v2/pkg/minio"
 	"golang.org/x/net/context"
 	"time"
 )
@@ -38,11 +39,15 @@ func FeedService(ctx context.Context, latestTime int64, token string) (err error
 		// TODO 作者信息完善，包括点赞数、关注数，名字，是否关注等
 		VideoAuthor := &video.User{Id: value.AuthorID}
 
+		// 获取限时 PresignedUrl
+		playUrl, _ := minio.PresignedGetObjectUrl(ctx, "video_bucket", value.VideoName, time.Minute*60)
+		coverUrl, _ := minio.PresignedGetObjectUrl(ctx, "pic_bucket", value.VideoName, time.Minute*60)
+
 		curVideo := video.Video{
 			Id:            value.ID,
 			Author:        VideoAuthor,
-			PlayUrl:       value.PlayUrl,
-			CoverUrl:      value.CoverUrl,
+			PlayUrl:       playUrl,
+			CoverUrl:      coverUrl,
 			FavoriteCount: 0,
 			CommentCount:  0,
 			IsFavorite:    false,

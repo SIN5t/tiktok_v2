@@ -3,11 +3,13 @@
 package ApiGateway
 
 import (
+	"bytes"
 	"context"
 	"github.com/SIN5t/tiktok_v2/cmd/api/rpc"
 	config "github.com/SIN5t/tiktok_v2/config/const"
 	"github.com/SIN5t/tiktok_v2/kitex_gen/video"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"io"
 	"net/http"
 	"strconv"
 	"time"
@@ -66,9 +68,34 @@ func PublishAction(ctx context.Context, c *app.RequestContext) {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}*/
+
+	//如果你只需要获取普通的表单字段值，包括文本字段等，可以使用 r.PostForm 方法。而如果你需要获取上传的文件，就需要使用 r.FormFile 方法
+	fileHeader, err := c.Request.FormFile("data")
+	if err != nil {
+		hlog.Error(err.Error())
+		c.JSON(http.StatusOK, ApiGateway.BaseResp{
+			StatusCode: 1,
+			StatusMsg:  "服务器获取视频失败",
+		})
+	}
+
+	file, err := fileHeader.Open()
+	if err != nil {
+		hlog.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, ApiGateway.BaseResp{
+			StatusCode: 1,
+			StatusMsg:  "服务器内部错误",
+		})
+	}
+	defer file.Close()
+	//copy为[]byte格式
+	buf := bytes.NewBuffer(nil)
+	_, _ = io.Copy(buf, file)
+
 	request := &video.PublishActionRequest{
 		Token: c.PostForm("token"),
-		Data:  []byte(c.PostForm("data")), // TODO 校验下这样行不行，是否需要使用 FormFile 获取
+		//Data:  []byte(c.PostForm("data")), // FormFile一般用于获取文件，PostForm 用于从 POST请求中获取表单数据
+		Data:  buf.Bytes(),
 		Title: c.PostForm("title"),
 	}
 	response, err := rpc.PublishAction(ctx, request)
@@ -79,9 +106,7 @@ func PublishAction(ctx context.Context, c *app.RequestContext) {
 		})
 	}
 	//resp := new(ApiGateway.DouyinPublishActionResponse)
-
 	c.JSON(consts.StatusOK, response)
-
 }
 
 // PublishList .

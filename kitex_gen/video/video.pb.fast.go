@@ -1111,8 +1111,8 @@ func (x *PublishListResponse) sizeField3() (n int) {
 var fieldIDToName_Video = map[int32]string{
 	1: "Id",
 	2: "Author",
-	3: "PlayUrl",
-	4: "CoverUrl",
+	3: "videoName",
+	4: "videoPath",
 	5: "FavoriteCount",
 	6: "CommentCount",
 	7: "IsFavorite",

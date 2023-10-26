@@ -67,8 +67,7 @@ func (s *VideoServiceImpl) PublishAction(ctx context.Context, req *video.Publish
 		Title:     req.Title,
 	}
 
-	// 开启消费者,消费者会阻塞，需要开一个goroutine,在main中开启了
-
+	// 生成之前需要开启消费者,消费者会阻塞，需要开一个goroutine,在main中开启
 	KafkaVideo.ProduceMsg(KafkaVideo.NewProducer(), videoMsg)
 
 	resp = &video.PublishActionResponse{

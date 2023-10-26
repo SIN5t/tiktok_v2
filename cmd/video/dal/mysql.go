@@ -19,3 +19,10 @@ func GetVideosByLastTime(ctx context.Context, lastTime int64, limit int) (videoL
 
 	return videoList, nil
 }
+
+func SaveVideoToMysql(video *Video) error {
+	if err := VideoMysqlDB.Create(video).Error; err != nil {
+		return err
+	}
+	return nil
+}

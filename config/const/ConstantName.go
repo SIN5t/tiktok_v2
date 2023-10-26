@@ -7,6 +7,7 @@ const (
 	KafkaVideoConsumer = "12345678910"
 	JwtSigningKey      = "signing-key"
 	JwtIdentityKey     = "userId"
+	RedisZsetVideoKey  = "redisVideoKey"
 )
 
 const (

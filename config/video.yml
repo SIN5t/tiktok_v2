@@ -24,3 +24,5 @@ otel:
 location:
   video: ./temp/video/
   pic: ./temp/pic/
+snowflake:
+  node: 2

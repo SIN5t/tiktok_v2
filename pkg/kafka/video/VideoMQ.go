@@ -3,9 +3,11 @@ package video
 import (
 	"fmt"
 	"github.com/IBM/sarama"
+	db "github.com/SIN5t/tiktok_v2/cmd/video/dal"
 	"github.com/SIN5t/tiktok_v2/cmd/video/service"
 	config "github.com/SIN5t/tiktok_v2/config/const"
 	"github.com/SIN5t/tiktok_v2/pkg/minio"
+	"github.com/SIN5t/tiktok_v2/pkg/snowflakes"
 	"github.com/SIN5t/tiktok_v2/pkg/viper"
 	"log"
 	"strings"
@@ -130,52 +132,41 @@ func ConsumePubActMsg(consumer sarama.Consumer) {
 				//每个消息开goroutine并行执行
 				go func() {
 
-					// 上传OSS
-					minioViper := viper.Init("minio")
-					videoViper := viper.Init("video")
-					contentType := minioViper.GetString("contentType.video")
-
-					picName := strings.TrimSuffix(videoMsg.VideoName, "mp4") + "jpeg"
-					tempJpegFrameLoc := videoViper.GetString("location.pic") + picName
-
-					err := minio.UploadFile(minioViper.GetString("video_bucket"), videoMsg.VideoName, videoMsg.VideoPath, contentType)
-					if err != nil {
-						klog.Errorf("视频上传至OSS失败: %s", err.Error())
+					// 将视频封面等上传OSS
+					if UploadToOSS(videoMsg) {
 						return
 					}
-
-					// 截帧，上传图片
-					service.GetJpegFromFfmpeg(videoMsg.VideoPath, tempJpegFrameLoc, picName, 10)
-					err = minio.UploadFile(minioViper.GetString("pic_bucket"), picName, tempJpegFrameLoc, contentType)
-					if err != nil {
-						klog.Fatalf("视频帧图片上传到OSS失败：", err.Error())
-						return
-					}
-
-					// 所有操作完成之后，删除临时文件
-					defer func() {
-						// TODO 测试阶段，不删除测试视频
-						//err := os.Remove(videoMsg.VideoPath)
-						//err = os.Remove(tempJpegFrameLoc)
-						if err != nil {
-							klog.Errorf("删除文件失败: %s", err.Error())
-							return
-						} // 文件路径包含文件名
-					}()
 
 					// 确保视频上传完毕后，再开并行的goroutine，执行可并行的任务
+					videoInit := viper.Init("video")
+					videoNode := videoInit.GetInt64("snowflake.node")
+					dbVideo := &db.Video{
+						BaseModel: db.BaseModel{
+							ID:         snowflakes.GenerateSnowFlakeId(videoNode),
+							CreateTime: time.Now(),
+							IsDeleted:  false,
+						},
+						AuthorID:  videoMsg.AuthorId,
+						VideoName: videoMsg.VideoName,
+						VideoPath: videoMsg.VideoPath,
+						Title:     videoMsg.Title,
+					}
 
 					// 上传redis
 					go func() {
+						// createTime,url需要添加
+						db.RedisAddVideo(dbVideo)
 						return
 					}()
 					// 上传mysql
 					go func() {
+						err = db.SaveVideoToMysql(dbVideo)
+						if err != nil {
+							log.Fatal(err.Error())
+						}
 						return
 					}()
-
 				}()
-
 			}
 			// 设置超时时间自动关闭？ 还是应该一直开着
 			endChan <- true
@@ -184,4 +175,40 @@ func ConsumePubActMsg(consumer sarama.Consumer) {
 
 	<-endChan              // 小心死锁，上面 endChan <- true 这里才会执行
 	defer consumer.Close() // TODO 实际需改
+}
+
+func UploadToOSS(videoMsg *VideoMsg) bool {
+	// 上传OSS
+	minioViper := viper.Init("minio")
+	videoViper := viper.Init("video")
+	contentType := minioViper.GetString("contentType.video")
+
+	picName := strings.TrimSuffix(videoMsg.VideoName, "mp4") + "jpeg"
+	tempJpegFrameLoc := videoViper.GetString("location.pic") + picName
+
+	err := minio.UploadFile(minioViper.GetString("video_bucket"), videoMsg.VideoName, videoMsg.VideoPath, contentType)
+	if err != nil {
+		klog.Errorf("视频上传至OSS失败: %s", err.Error())
+		return true
+	}
+
+	// 截帧，上传图片
+	service.GetJpegFromFfmpeg(videoMsg.VideoPath, tempJpegFrameLoc, picName, 10)
+	err = minio.UploadFile(minioViper.GetString("pic_bucket"), picName, tempJpegFrameLoc, contentType)
+	if err != nil {
+		klog.Fatalf("视频帧图片上传到OSS失败：", err.Error())
+		return true
+	}
+
+	// 所有操作完成之后，删除临时文件
+	defer func() {
+		// TODO 测试阶段，不删除测试视频
+		//err := os.Remove(videoMsg.VideoPath)
+		//err = os.Remove(tempJpegFrameLoc)
+		if err != nil {
+			klog.Errorf("删除文件失败: %s", err.Error())
+			return
+		} // 文件路径包含文件名
+	}()
+	return false
 }

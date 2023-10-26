@@ -7,6 +7,7 @@ import (
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"golang.org/x/net/context"
+	"time"
 )
 
 var MinioClient *minio.Client
@@ -61,12 +62,12 @@ func InitMinIo() {
 func UploadFile(bucketName string, objectName string, filePath string, contentType string) error {
 
 	// 上传的文件不显示特定的内容类型（例如二进制文件），则可以将 ContentType 设置为空字符串。
-	info, err := MinioClient.FPutObject(context.Background(), bucketName, objectName, filePath, minio.PutObjectOptions{ContentType: contentType})
+	_, err := MinioClient.FPutObject(context.Background(), bucketName, objectName, filePath, minio.PutObjectOptions{ContentType: contentType})
 	if err != nil {
 		klog.Debugf("error occurred %s\n", err.Error())
 		return err
 	}
-	klog.Info(info)
+	//klog.Info(info)
 	return nil
 }
 
@@ -76,4 +77,14 @@ func DownloadFile(bucketName string, objectName string, fileDownloadPath string)
 		return err
 	}
 	return nil
+}
+
+func PresignedGetObjectUrl(ctx context.Context, bucketNameViper string, objectName string, expires time.Duration) (string, error) {
+	viper := viper.Init("minio")
+	bucketName := viper.GetString(bucketNameViper)
+	url, err := MinioClient.PresignedGetObject(ctx, bucketName, objectName, expires, nil)
+	if err != nil {
+		return "", err
+	}
+	return url.String(), nil
 }

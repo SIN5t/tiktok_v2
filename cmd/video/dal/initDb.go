@@ -23,8 +23,7 @@ var (
 // BaseModel model ID and other info
 type BaseModel struct {
 	ID         int64     `gorm:"primarykey"`
-	CreateTime time.Time `gorm:""`
-	UpdateAt   time.Time `gorm:"index"`
+	CreateTime time.Time `gorm:"index"`
 	DeleteAt   gorm.DeletedAt
 	IsDeleted  bool
 }
@@ -32,18 +31,10 @@ type BaseModel struct {
 // Video model video info
 type Video struct {
 	BaseModel
-	AuthorID int64 `gorm:"index:idx_video_authorid;not null"`
-
-	PlayUrl  string `gorm:"type:varchar(200);not null"`
-	CoverUrl string `gorm:"type:varchar(200);not null"`
-
-	FavCount int64 `gorm:"type:int;default:0;not null"`
-	ComCount int64 `gorm:"type:int;default:0;not null"`
-
-	IsFavorite bool `gorm:"type:bool;default:false;not null"`
-
-	Data  []byte `gorm:"column:video_data"`
-	Title string `gorm:"type:varchar(50);not null"`
+	AuthorID  int64  `gorm:"index:idx_video_authorid;not null"`
+	VideoName string `gorm:"type:varchar(200);not null"`
+	VideoPath string `gorm:"type:varchar(200);not null"`
+	Title     string `gorm:"type:varchar(50);not null"`
 }
 
 func InitMysqlDB() {
